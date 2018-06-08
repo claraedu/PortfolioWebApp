@@ -1,0 +1,93 @@
+﻿@model IEnumerable<PortfolioViewer.Models.Portfolio.CustomerHoldings>
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    PortfolioViewer.Models.Portfolio.PortfolioInfo info = (PortfolioViewer.Models.Portfolio.PortfolioInfo)ViewData["info"];
+    int customerID = (int)ViewData["customerID"];
+}
+
+@Scripts.Render("~/bundles/jquery")
+@Scripts.Render("https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.min.js")
+
+<h4>Portfolio: @info.Portfolio_Name</h4>
+<h4>Benchmark: @info.Benchmark_Name</h4>
+
+
+<div class="row">
+    <div class="col-sm-6">
+        <div id="portfolioKPIContainer" ></div>
+        <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">Security</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>
+                                <div id="@item.Security_ID" class="btn btn-primary holding"> @Html.DisplayFor(m => item.Security_Name)</div>
+                                <div id="@(item.Security_ID)Container" />
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+    </div>
+    <div class="col-sm-6">
+        <div id="performanceContainer"></div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $.ajax({
+            url: '@Url.Action("PortfolioKPIS", "Portfolio")',
+            data: { customerID: @customerID},
+            //contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            success: function success(result) {
+                $('#portfolioKPIContainer').html(result)
+            },
+            error: function error() {
+                alert("Error, no data");
+            }
+        });
+
+        $.ajax({
+            url: '@Url.Action("MonthlyPerformance", "Portfolio")',
+            data: { customerID: @customerID},
+            dataType: "html",
+            success: function success(result) {
+                $('#performanceContainer').html(result)
+            },
+            error: function error() {
+                alert("Error, no data");
+            }
+        });
+    });
+
+    $(".holding").click(function (event) {
+
+        if ($(this).data('clicked')) {
+            $('#' + event.target.id + 'Container').toggle(20)
+        } else {
+            $(this).data('clicked', true)
+
+            $.ajax({
+                url: '@Url.Action("HoldingsDetail", "Portfolio")',
+                data: { customerID: @customerID, securityID: event.target.id },
+                //contentType: "application/json; charset=utf-8",
+                dataType: "html",
+                success: function success(result) {
+                    $('#'+event.target.id+'Container').html(result)
+                },
+                error: function error() {
+                    alert("Error, no data");
+                }
+            });
+        }
+
+    })
+</script>

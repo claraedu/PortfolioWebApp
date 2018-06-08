@@ -1,0 +1,42 @@
+﻿@model PortfolioViewer.Models.Portfolio.PortfolioKPIS
+
+
+<table class="table table-striped table-bordered">
+    <thead class="thead-light">
+        <tr>
+            <th scope="col"></th>
+            <th scope="col">Annual Return</th>
+            <th scope="col">Standard Deviation</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <th scope="row">Portfolio:</th>
+            <td>@Math.Round(Model.ARPortfolio.Value,2)</td>
+            <td>@Math.Round(Model.stdDeviationPortfolio.Value, 5)</td>
+        </tr>
+        <tr>
+            <th scope="row">Benchmark:</th>
+            <td>@Math.Round(Model.ARBenchmark.Value,2)</td>
+            <td>@Math.Round(Model.stdDeviationBenchmark.Value, 5)</td>
+        </tr>
+    </tbody>
+</table>
+
+<table class="table table-bordered"> 
+    <thead class="thead-light">
+        <tr>
+            <th scope="col">Tracking error</th>
+            <th scope="col">Mean-Delta</th>
+            <th scope="col">Information Ratio</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>@Math.Round(Model.TrackingError.Value,4)</td>
+            <td>@Math.Round(Model.Mean_Delta.Value, 8)</td>
+            <td>@Math.Round(Model.InformationRatio.Value,4)</td>
+        </tr>
+    </tbody>
+</table>
+

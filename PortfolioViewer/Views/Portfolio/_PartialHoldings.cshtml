@@ -1,0 +1,37 @@
+﻿@model PortfolioViewer.Models.Portfolio.HoldingsDetail
+
+@{
+
+    <table class="table table-striped">
+        <thead class="thead-light">
+            <tr>
+                <th scope="col">Type</th>
+                <th scope="col">Quantity</th>
+                <th scope="col">From</th>
+                <th scope="col">To</th>
+                <th scope="col">Market value</th>
+            </tr>
+            </thead>
+        <tbody>
+            <tr>
+                <td>
+                    @Html.DisplayFor(m => m.Type)
+                </td>
+                <td>
+                    @Html.DisplayFor(m => m.Quantity)
+                </td>
+                <td>
+                    @Html.DisplayFor(m => m.Date_From)
+                </td>
+                <td>
+                    @Html.DisplayFor(m => m.Date_To)
+                </td>
+                <td>
+                    @Html.DisplayFor(m => m.MarketValue)
+                </td>
+            </tr>
+            </tbody>
+    </table>
+
+
+}

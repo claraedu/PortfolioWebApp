@@ -1,0 +1,195 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="PortfolioModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <Function Name="spCalculateKeyPerformanceIndicators" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="CustomerID" Type="int" Mode="In" />
+        </Function>
+        <Function Name="spGetCustomerHoldings" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="CustomerID" Type="int" Mode="In" />
+        </Function>
+        <Function Name="spGetCustomers" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
+        <Function Name="spGetHoldingsDetail" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="CustomerID" Type="int" Mode="In" />
+          <Parameter Name="SecurityID" Type="int" Mode="In" />
+        </Function>
+        <Function Name="spGetPortfolioInfo" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="CustomerID" Type="int" Mode="In" />
+        </Function>
+        <Function Name="spMonthlyPerformance" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="CustomerID" Type="int" Mode="In" />
+        </Function>
+        <EntityContainer Name="PortfolioModelStoreContainer" />
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="PortfolioModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityContainer Name="CustomerPortfolioEntities" annotation:LazyLoadingEnabled="true" >
+          <FunctionImport Name="GetCustomerHoldings" ReturnType="Collection(PortfolioModel.CustomerHoldings)">
+          <Parameter Name="CustomerID" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="GetCustomers" ReturnType="Collection(PortfolioModel.Customer)" />
+          <FunctionImport Name="GetMonthlyPerformance" ReturnType="Collection(PortfolioModel.MonthlyPerformance)">
+          <Parameter Name="CustomerID" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="GetPortfolioInfo" ReturnType="Collection(PortfolioModel.PortfolioInfo)">
+          <Parameter Name="CustomerID" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="GetPortfolioKPIS" ReturnType="Collection(PortfolioModel.PortfolioKPIS)">
+          <Parameter Name="CustomerID" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="GetHoldingsDetail" ReturnType="Collection(PortfolioModel.HoldingsDetail)">
+            <Parameter Name="CustomerID" Mode="In" Type="Int32" />
+            <Parameter Name="SecurityID" Mode="In" Type="Int32" />
+          </FunctionImport>
+        </EntityContainer>
+        <ComplexType Name="Customer">
+          <Property Type="Int32" Name="Customer_ID" Nullable="false" />
+          <Property Type="String" Name="Customer_Name" Nullable="false" />
+        </ComplexType>
+        <ComplexType Name="MonthlyPerformance">
+          <Property Type="Int32" Name="Portfolio_ID" Nullable="false" />
+          <Property Type="Int32" Name="Benchmark_ID" Nullable="false" />
+          <Property Type="String" Name="Month" Nullable="true" MaxLength="30" />
+          <Property Type="Int32" Name="Year" Nullable="true" />
+          <Property Type="Double" Name="Portfolio_Performance" Nullable="true" />
+          <Property Type="Double" Name="Benchmark_Performance" Nullable="true" />
+        </ComplexType>
+        <ComplexType Name="CustomerHoldings">
+          <Property Type="String" Name="Security_Name" Nullable="false" />
+          <Property Type="Int32" Name="Security_ID" Nullable="false" />
+          </ComplexType>
+        <ComplexType Name="PortfolioInfo">
+          <Property Type="Int32" Name="Portfolio_ID" Nullable="false" />
+          <Property Type="String" Name="Portfolio_Name" Nullable="true" MaxLength="100" />
+          <Property Type="String" Name="Benchmark_Name" Nullable="false" />
+        </ComplexType>
+        <ComplexType Name="PortfolioKPIS">
+          <Property Type="Int32" Name="Portfolio_ID" Nullable="false" />
+          <Property Type="Double" Name="stdDeviationPortfolio" Nullable="true" />
+          <Property Type="Double" Name="stdDeviationBenchmark" Nullable="true" />
+          <Property Type="Decimal" Name="Mean_Delta" Nullable="true" Precision="24" Scale="8" />
+          <Property Type="Decimal" Name="ARPortfolio" Nullable="true" Precision="24" Scale="8" />
+          <Property Type="Decimal" Name="ARBenchmark" Nullable="true" Precision="24" Scale="8" />
+          <Property Type="Decimal" Name="TrackingError" Nullable="true" Precision="24" Scale="8" />
+          <Property Type="Decimal" Name="InformationRatio" Nullable="true" Precision="24" Scale="8" />
+        </ComplexType>
+        <ComplexType Name="spGetCustomerHoldings_Result">
+          <Property Type="String" Name="Security_Name" Nullable="false" />
+          <Property Type="Int32" Name="Security_ID" Nullable="false" />
+        </ComplexType>
+        <ComplexType Name="spGetHoldingsDetail_Result">
+          <Property Type="String" Name="Security_Name" Nullable="false" />
+          <Property Type="Int32" Name="Security_ID" Nullable="false" />
+          <Property Type="DateTime" Name="Date_From" Nullable="false" />
+          <Property Type="DateTime" Name="Date_To" Nullable="false" />
+          <Property Type="Int32" Name="Quantity" Nullable="false" />
+          <Property Type="Decimal" Name="MarketValue" Nullable="false" Precision="24" Scale="8" />
+          <Property Type="String" Name="Type" Nullable="false" MaxLength="1" />
+        </ComplexType>
+        <ComplexType Name="HoldingsDetail">
+          <Property Type="String" Name="Security_Name" Nullable="false" />
+          <Property Type="Int32" Name="Security_ID" Nullable="false" />
+          <Property Type="DateTime" Name="Date_From" Nullable="false" />
+          <Property Type="DateTime" Name="Date_To" Nullable="false" />
+          <Property Type="Int32" Name="Quantity" Nullable="false" />
+          <Property Type="Decimal" Name="MarketValue" Nullable="false" Precision="24" Scale="8" />
+          <Property Type="String" Name="Type" Nullable="false" MaxLength="1" />
+        </ComplexType>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="PortfolioModelStoreContainer" CdmEntityContainer="CustomerPortfolioEntities" >
+          <FunctionImportMapping FunctionImportName="GetCustomers" FunctionName="PortfolioModel.Store.spGetCustomers">
+          <ResultMapping>
+              <ComplexTypeMapping TypeName="PortfolioModel.Customer">
+                <ScalarProperty Name="Customer_ID" ColumnName="Customer_ID" />
+                <ScalarProperty Name="Customer_Name" ColumnName="Customer_Name" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="GetMonthlyPerformance" FunctionName="PortfolioModel.Store.spMonthlyPerformance">
+          <ResultMapping>
+              <ComplexTypeMapping TypeName="PortfolioModel.MonthlyPerformance">
+                <ScalarProperty Name="Portfolio_ID" ColumnName="Portfolio_ID" />
+                <ScalarProperty Name="Benchmark_ID" ColumnName="Benchmark_ID" />
+                <ScalarProperty Name="Month" ColumnName="Month" />
+                <ScalarProperty Name="Year" ColumnName="Year" />
+                <ScalarProperty Name="Portfolio_Performance" ColumnName="Portfolio Performance" />
+                <ScalarProperty Name="Benchmark_Performance" ColumnName="Benchmark Performance" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="GetPortfolioInfo" FunctionName="PortfolioModel.Store.spGetPortfolioInfo">
+          <ResultMapping>
+              <ComplexTypeMapping TypeName="PortfolioModel.PortfolioInfo">
+                <ScalarProperty Name="Portfolio_ID" ColumnName="Portfolio_ID" />
+                <ScalarProperty Name="Portfolio_Name" ColumnName="Portfolio_Name" />
+                <ScalarProperty Name="Benchmark_Name" ColumnName="Benchmark_Name" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="GetPortfolioKPIS" FunctionName="PortfolioModel.Store.spCalculateKeyPerformanceIndicators">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="PortfolioModel.PortfolioKPIS">
+                <ScalarProperty Name="Portfolio_ID" ColumnName="Portfolio_ID" />
+                <ScalarProperty Name="stdDeviationPortfolio" ColumnName="stdDeviationPortfolio" />
+                <ScalarProperty Name="stdDeviationBenchmark" ColumnName="stdDeviationBenchmark" />
+                <ScalarProperty Name="Mean_Delta" ColumnName="Mean-Delta" />
+                <ScalarProperty Name="ARPortfolio" ColumnName="ARPortfolio" />
+                <ScalarProperty Name="ARBenchmark" ColumnName="ARBenchmark" />
+                <ScalarProperty Name="TrackingError" ColumnName="TrackingError" />
+                <ScalarProperty Name="InformationRatio" ColumnName="InformationRatio" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="GetHoldingsDetail" FunctionName="PortfolioModel.Store.spGetHoldingsDetail">
+          <ResultMapping>
+              <ComplexTypeMapping TypeName="PortfolioModel.HoldingsDetail">
+                <ScalarProperty Name="Security_Name" ColumnName="Security_Name" />
+                <ScalarProperty Name="Security_ID" ColumnName="Security_ID" />
+                <ScalarProperty Name="Date_From" ColumnName="Date_From" />
+                <ScalarProperty Name="Date_To" ColumnName="Date_To" />
+                <ScalarProperty Name="Quantity" ColumnName="Quantity" />
+                <ScalarProperty Name="MarketValue" ColumnName="MarketValue" />
+                <ScalarProperty Name="Type" ColumnName="Type" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="GetCustomerHoldings" FunctionName="PortfolioModel.Store.spGetCustomerHoldings">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="PortfolioModel.CustomerHoldings">
+                <ScalarProperty Name="Security_Name" ColumnName="Security_Name" />
+                <ScalarProperty Name="Security_ID" ColumnName="Security_ID" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

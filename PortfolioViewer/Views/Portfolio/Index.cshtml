@@ -1,0 +1,36 @@
+﻿@model PortfolioViewer.Models.Portfolio.Customer
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    IEnumerable<PortfolioViewer.Models.Portfolio.Customer> customers = (IEnumerable<PortfolioViewer.Models.Portfolio.Customer>)ViewData["customerList"];
+}
+
+@using (Html.BeginForm("CustomerPortfolio", "Portfolio", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-row">
+        <div class="form-group">
+            <h3>Select Portfolio:</h3>
+            <select class="form-control" id="PortfolioSelect" name="Customer_ID">
+
+                @foreach (var item in customers)
+                {
+                    <option value="@Html.DisplayFor(m => item.Customer_ID)">@Html.DisplayFor(m => item.Customer_Name)</option>
+                }
+            </select>
+        </div>
+    </div>
+
+    <div class="form-row">
+        <div class="form-group">
+            <input type="submit" value="Show Portfolio" class="btn btn-default" />
+        </div>
+
+    </div>
+
+}
+
+
+
