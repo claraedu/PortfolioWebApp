@@ -28,58 +28,71 @@ namespace PortfolioViewer.Models.Portfolio
         }
     
     
-        public virtual ObjectResult<CustomerHoldings> GetCustomerHoldings(Nullable<int> customerID)
+        public virtual ObjectResult<PortfolioHoldings> GetPortfolioHoldings(Nullable<int> portfolioID)
         {
-            var customerIDParameter = customerID.HasValue ?
-                new ObjectParameter("CustomerID", customerID) :
-                new ObjectParameter("CustomerID", typeof(int));
+            var portfolioIDParameter = portfolioID.HasValue ?
+                new ObjectParameter("PortfolioID", portfolioID) :
+                new ObjectParameter("PortfolioID", typeof(int));
     
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<CustomerHoldings>("GetCustomerHoldings", customerIDParameter);
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<PortfolioHoldings>("GetPortfolioHoldings", portfolioIDParameter);
         }
     
-        public virtual ObjectResult<Customer> GetCustomers()
+        public virtual ObjectResult<Portfolio> GetPortfolios(Nullable<int> customer_ID)
         {
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<Customer>("GetCustomers");
+            var customer_IDParameter = customer_ID.HasValue ?
+                new ObjectParameter("Customer_ID", customer_ID) :
+                new ObjectParameter("Customer_ID", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<Portfolio>("GetPortfolios", customer_IDParameter);
         }
     
-        public virtual ObjectResult<MonthlyPerformance> GetMonthlyPerformance(Nullable<int> customerID)
+        public virtual ObjectResult<MonthlyPerformance> GetMonthlyPerformance(Nullable<int> portfolio_ID)
         {
-            var customerIDParameter = customerID.HasValue ?
-                new ObjectParameter("CustomerID", customerID) :
-                new ObjectParameter("CustomerID", typeof(int));
+            var portfolio_IDParameter = portfolio_ID.HasValue ?
+                new ObjectParameter("Portfolio_ID", portfolio_ID) :
+                new ObjectParameter("Portfolio_ID", typeof(int));
     
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<MonthlyPerformance>("GetMonthlyPerformance", customerIDParameter);
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<MonthlyPerformance>("GetMonthlyPerformance", portfolio_IDParameter);
         }
     
-        public virtual ObjectResult<PortfolioInfo> GetPortfolioInfo(Nullable<int> customerID)
+        public virtual ObjectResult<PortfolioInfo> GetPortfolioInfo(Nullable<int> portfolioID)
         {
-            var customerIDParameter = customerID.HasValue ?
-                new ObjectParameter("CustomerID", customerID) :
-                new ObjectParameter("CustomerID", typeof(int));
+            var portfolioIDParameter = portfolioID.HasValue ?
+                new ObjectParameter("PortfolioID", portfolioID) :
+                new ObjectParameter("PortfolioID", typeof(int));
     
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<PortfolioInfo>("GetPortfolioInfo", customerIDParameter);
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<PortfolioInfo>("GetPortfolioInfo", portfolioIDParameter);
         }
     
-        public virtual ObjectResult<PortfolioKPIS> GetPortfolioKPIS(Nullable<int> customerID)
+        public virtual ObjectResult<PortfolioKPIS> GetPortfolioKPIS(Nullable<int> portfolio_ID)
         {
-            var customerIDParameter = customerID.HasValue ?
-                new ObjectParameter("CustomerID", customerID) :
-                new ObjectParameter("CustomerID", typeof(int));
+            var portfolio_IDParameter = portfolio_ID.HasValue ?
+                new ObjectParameter("Portfolio_ID", portfolio_ID) :
+                new ObjectParameter("Portfolio_ID", typeof(int));
     
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<PortfolioKPIS>("GetPortfolioKPIS", customerIDParameter);
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<PortfolioKPIS>("GetPortfolioKPIS", portfolio_IDParameter);
         }
     
-        public virtual ObjectResult<HoldingsDetail> GetHoldingsDetail(Nullable<int> customerID, Nullable<int> securityID)
+        public virtual ObjectResult<HoldingsDetail> GetHoldingsDetail(Nullable<int> portfolioID, Nullable<int> securityID)
         {
-            var customerIDParameter = customerID.HasValue ?
-                new ObjectParameter("CustomerID", customerID) :
-                new ObjectParameter("CustomerID", typeof(int));
+            var portfolioIDParameter = portfolioID.HasValue ?
+                new ObjectParameter("PortfolioID", portfolioID) :
+                new ObjectParameter("PortfolioID", typeof(int));
     
             var securityIDParameter = securityID.HasValue ?
                 new ObjectParameter("SecurityID", securityID) :
                 new ObjectParameter("SecurityID", typeof(int));
     
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<HoldingsDetail>("GetHoldingsDetail", customerIDParameter, securityIDParameter);
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<HoldingsDetail>("GetHoldingsDetail", portfolioIDParameter, securityIDParameter);
+        }
+    
+        public virtual int spGetPortfolios(Nullable<int> customer_ID)
+        {
+            var customer_IDParameter = customer_ID.HasValue ?
+                new ObjectParameter("Customer_ID", customer_ID) :
+                new ObjectParameter("Customer_ID", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("spGetPortfolios", customer_IDParameter);
         }
     }
 }

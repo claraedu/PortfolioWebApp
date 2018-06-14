@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Newtonsoft.Json;
+using PortfolioViewer.Interfaces;
 using PortfolioViewer.Models.Portfolio;
 using System;
 using System.Collections;
@@ -16,16 +17,17 @@ namespace PortfolioViewer.Controllers
     public class PortfolioController : Controller
     {
 
-        CustomerPortfolioEntities cpe = new CustomerPortfolioEntities();
+        IPortfolioRepository _PortfolioRepository;
+
         JsonSerializerSettings _jsonSetting = new JsonSerializerSettings()
         {
             NullValueHandling = NullValueHandling.Ignore,
             Formatting = Formatting.Indented
         };
 
-        public PortfolioController()
+        public PortfolioController(IPortfolioRepository portfolioRepository)
         {
-            
+            _PortfolioRepository = portfolioRepository;
         }
 
         public ApplicationUserManager UserManager
@@ -40,19 +42,21 @@ namespace PortfolioViewer.Controllers
         public ActionResult Index()
         {
 
-            ViewData.Add("customerList", cpe.GetCustomers());
+            var user = UserManager.FindById(User.Identity.GetUserId());
+
+            ViewData.Add("portfolios", _PortfolioRepository.GetPortfolios(user.CustomerID));
 
             return View();
         }
 
 
         [HttpPost, ValidateAntiForgeryToken]
-        public ActionResult CustomerPortfolio(Customer customer)
+        public ActionResult CustomerPortfolio(Portfolio p)
         {
-            ViewData.Add("info", cpe.GetPortfolioInfo(customer.Customer_ID).First());
-            ViewData.Add("customerID",customer.Customer_ID);
+            ViewData.Add("info", _PortfolioRepository.GetPortfolioInfo(p.Portfolio_ID));
+            ViewData.Add("portfolioID",p.Portfolio_ID);
 
-            var portfolio = cpe.GetCustomerHoldings(customer.Customer_ID);
+            var portfolio = _PortfolioRepository.GetPortfolioHoldings(p.Portfolio_ID);
 
             if (portfolio == null)
             {
@@ -62,22 +66,22 @@ namespace PortfolioViewer.Controllers
             return View(portfolio);
         }
 
-        public ActionResult PortfolioKPIS(int customerID)
+        public ActionResult PortfolioKPIS(int portfolioID)
         {
-            PortfolioKPIS kpis = cpe.GetPortfolioKPIS(customerID).First();
+            PortfolioKPIS kpis = _PortfolioRepository.GetPortfolioKeyPerformanceIndicators(portfolioID);
             return PartialView("_PartialKPIS",kpis);
         }
 
 
-        public ActionResult HoldingsDetail(int customerID, int securityID)
+        public ActionResult HoldingsDetail(int portfolioID, int securityID)
         {
-            HoldingsDetail detail = cpe.GetHoldingsDetail(customerID,securityID).First();
+            HoldingsDetail detail = _PortfolioRepository.GetHoldingsDetail(portfolioID,securityID);
             return PartialView("_PartialHoldings",detail);
         }
 
-        public ActionResult MonthlyPerformance(int customerID)
+        public ActionResult MonthlyPerformance(int portfolioID)
         {
-            IEnumerable<MonthlyPerformance> performance = cpe.GetMonthlyPerformance(customerID);
+            IEnumerable<MonthlyPerformance> performance = _PortfolioRepository.GetMonthlyPerformance(portfolioID);
 
             return PartialView("_PartialMonthlyPerformance",performance);
         }

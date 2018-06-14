@@ -1,9 +1,9 @@
-﻿@model IEnumerable<PortfolioViewer.Models.Portfolio.CustomerHoldings>
+﻿@model IEnumerable<PortfolioViewer.Models.Portfolio.PortfolioHoldings>
 
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
     PortfolioViewer.Models.Portfolio.PortfolioInfo info = (PortfolioViewer.Models.Portfolio.PortfolioInfo)ViewData["info"];
-    int customerID = (int)ViewData["customerID"];
+    int portfolioID = (int)ViewData["portfolioID"];
 }
 
 @Scripts.Render("~/bundles/jquery")
@@ -44,7 +44,7 @@
     $(document).ready(function () {
         $.ajax({
             url: '@Url.Action("PortfolioKPIS", "Portfolio")',
-            data: { customerID: @customerID},
+            data: { portfolioID: @portfolioID},
             //contentType: "application/json; charset=utf-8",
             dataType: "html",
             success: function success(result) {
@@ -57,7 +57,7 @@
 
         $.ajax({
             url: '@Url.Action("MonthlyPerformance", "Portfolio")',
-            data: { customerID: @customerID},
+            data: { portfolioID: @portfolioID},
             dataType: "html",
             success: function success(result) {
                 $('#performanceContainer').html(result)
@@ -77,7 +77,7 @@
 
             $.ajax({
                 url: '@Url.Action("HoldingsDetail", "Portfolio")',
-                data: { customerID: @customerID, securityID: event.target.id },
+                data: { portfolioID: @portfolioID, securityID: event.target.id },
                 //contentType: "application/json; charset=utf-8",
                 dataType: "html",
                 success: function success(result) {

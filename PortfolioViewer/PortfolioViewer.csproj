@@ -46,6 +46,12 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Autofac, Version=4.8.1.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
+      <HintPath>..\packages\Autofac.4.8.1\lib\net45\Autofac.dll</HintPath>
+    </Reference>
+    <Reference Include="Autofac.Integration.Mvc, Version=4.0.0.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
+      <HintPath>..\packages\Autofac.Mvc5.4.0.2\lib\net45\Autofac.Integration.Mvc.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -217,6 +223,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Interfaces\IPortfolioRepository.cs" />
     <Compile Include="Migrations\201806071513119_Initial.cs" />
     <Compile Include="Migrations\201806071513119_Initial.Designer.cs">
       <DependentUpon>201806071513119_Initial.cs</DependentUpon>
@@ -225,16 +232,16 @@
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
-    <Compile Include="Models\Portfolio\Customer.cs">
-      <DependentUpon>PortfolioModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\Portfolio\CustomerHoldings.cs">
-      <DependentUpon>PortfolioModel.tt</DependentUpon>
-    </Compile>
     <Compile Include="Models\Portfolio\HoldingsDetail.cs">
       <DependentUpon>PortfolioModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Portfolio\MonthlyPerformance.cs">
+      <DependentUpon>PortfolioModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Portfolio\Portfolio.cs">
+      <DependentUpon>PortfolioModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Portfolio\PortfolioHoldings.cs">
       <DependentUpon>PortfolioModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Portfolio\PortfolioInfo.cs">
@@ -258,13 +265,8 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>PortfolioModel.edmx</DependentUpon>
     </Compile>
-    <Compile Include="Models\Portfolio\spGetCustomerHoldings_Result.cs">
-      <DependentUpon>PortfolioModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\Portfolio\spGetHoldingsDetail_Result.cs">
-      <DependentUpon>PortfolioModel.tt</DependentUpon>
-    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Repositories\PortfolioRepository.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>

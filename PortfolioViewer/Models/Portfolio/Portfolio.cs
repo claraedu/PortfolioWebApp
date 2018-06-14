@@ -11,14 +11,9 @@ namespace PortfolioViewer.Models.Portfolio
 {
     using System;
     
-    public partial class spGetHoldingsDetail_Result
+    public partial class Portfolio
     {
-        public string Security_Name { get; set; }
-        public int Security_ID { get; set; }
-        public System.DateTime Date_From { get; set; }
-        public System.DateTime Date_To { get; set; }
-        public int Quantity { get; set; }
-        public decimal MarketValue { get; set; }
-        public string Type { get; set; }
+        public int Portfolio_ID { get; set; }
+        public string Portfolio_Name { get; set; }
     }
 }

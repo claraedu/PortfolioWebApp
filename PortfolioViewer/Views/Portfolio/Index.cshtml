@@ -1,9 +1,9 @@
-﻿@model PortfolioViewer.Models.Portfolio.Customer
+﻿@model PortfolioViewer.Models.Portfolio.Portfolio
 
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
 
-    IEnumerable<PortfolioViewer.Models.Portfolio.Customer> customers = (IEnumerable<PortfolioViewer.Models.Portfolio.Customer>)ViewData["customerList"];
+    IEnumerable<PortfolioViewer.Models.Portfolio.Portfolio> portfolios = (IEnumerable<PortfolioViewer.Models.Portfolio.Portfolio>)ViewData["portfolios"];
 }
 
 @using (Html.BeginForm("CustomerPortfolio", "Portfolio", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
@@ -13,11 +13,11 @@
     <div class="form-row">
         <div class="form-group">
             <h3>Select Portfolio:</h3>
-            <select class="form-control" id="PortfolioSelect" name="Customer_ID">
+            <select class="form-control" id="PortfolioSelect" name="Portfolio_ID">
 
-                @foreach (var item in customers)
+                @foreach (var item in portfolios)
                 {
-                    <option value="@Html.DisplayFor(m => item.Customer_ID)">@Html.DisplayFor(m => item.Customer_Name)</option>
+                    <option value="@Html.DisplayFor(m => item.Portfolio_ID)">@Html.DisplayFor(m => item.Portfolio_Name)</option>
                 }
             </select>
         </div>

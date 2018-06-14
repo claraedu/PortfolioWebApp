@@ -11,9 +11,9 @@ namespace PortfolioViewer.Models.Portfolio
 {
     using System;
     
-    public partial class Customer
+    public partial class PortfolioHoldings
     {
-        public int Customer_ID { get; set; }
-        public string Customer_Name { get; set; }
+        public string Security_Name { get; set; }
+        public int Security_ID { get; set; }
     }
 }
