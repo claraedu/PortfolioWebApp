@@ -56,8 +56,6 @@ namespace PortfolioViewer.Controllers
 			return "Im sorry, No can do, Hombre.";
 		}
 
-
-
 	}
 
 	class SQLController
