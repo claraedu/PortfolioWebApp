@@ -7,6 +7,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Web;
 using System.Web.Mvc;
 
@@ -85,5 +86,14 @@ namespace PortfolioViewer.Controllers
 
             return PartialView("_PartialMonthlyPerformance",performance);
         }
+
+		//public FileResult DownloadReport()
+		//{
+		//	NetworkCredential nwc = new NetworkCredential("username", "password");
+		//	WebClient client = new WebClient();
+		//	client.Credentials = nwc;
+		//	string reportURL = "http://someIp/ReportServer/?%2fReportProjectName/ReportName&rs:Command=Render&rs:Format=PDF";
+		//	return File(client.DownloadData(reportURL), "application/pdf");
+		//}
     }
 }

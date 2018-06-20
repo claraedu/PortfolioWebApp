@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@ViewBag.Title = Portfolio Viewer</title>
+    <title>Portfolio Viewer</title>
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
 
@@ -19,16 +19,22 @@
                 </button>
                 @Html.ActionLink("Portfolio Viewer", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
             </div>
-            <div class="navbar-collapse collapse">
-                @if (Request.IsAuthenticated)
-                {
-                    <ul class="nav navbar-nav">
-                        <li>@Html.ActionLink("Home", "Index", "Home")</li>
-                        <li>@Html.ActionLink("Portfolios", "Index", "Portfolio")</li>
-                    </ul>
-                    @Html.Partial("_LoginPartial")
-                }
-            </div>
+			<div class="navbar-collapse collapse">
+				<ul class="nav navbar-nav">
+					@if (Request.IsAuthenticated)
+					{
+						<li>@Html.ActionLink("Home", "Index", "Home")</li>
+						<li>@Html.ActionLink("Portfolios", "Index", "Portfolio")</li>
+					}
+
+					@if (this.User.IsInRole("Administrator"))
+					{
+						<li>@Html.ActionLink("Administration", "Index", "Admin")</li>
+					}
+				</ul>
+
+				@Html.Partial("_LoginPartial")
+			</div>
         </div>
     </div>
     <div class="container body-content">

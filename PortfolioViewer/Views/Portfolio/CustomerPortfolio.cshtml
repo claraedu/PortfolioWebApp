@@ -1,16 +1,21 @@
 ﻿@model IEnumerable<PortfolioViewer.Models.Portfolio.PortfolioHoldings>
 
 @{
-    Layout = "~/Views/Shared/_Layout.cshtml";
-    PortfolioViewer.Models.Portfolio.PortfolioInfo info = (PortfolioViewer.Models.Portfolio.PortfolioInfo)ViewData["info"];
-    int portfolioID = (int)ViewData["portfolioID"];
+	Layout = "~/Views/Shared/_Layout.cshtml";
+	PortfolioViewer.Models.Portfolio.PortfolioInfo info = (PortfolioViewer.Models.Portfolio.PortfolioInfo)ViewData["info"];
+	int portfolioID = (int)ViewData["portfolioID"];
 }
 
 @Scripts.Render("~/bundles/jquery")
-@Scripts.Render("https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.min.js")
 
-<h4>Portfolio: @info.Portfolio_Name</h4>
-<h4>Benchmark: @info.Benchmark_Name</h4>
+<div class="jumbotron">
+	<h2 class="display-3">Portfolio: @info.Portfolio_Name</h2>
+	<h4 class="display-3">Benchmark: @info.Benchmark_Name</h4>
+	<hr class="my-4">
+	<p class="lead">
+		<a class="btn btn-primary btn-lg" href="http://desktop-9pkcvov:8085/ReportServer_SSRS/Pages/ReportViewer.aspx?%2fPortfolioPresentation%2fCustomerReport&rs:Command=Render&rs:Format=PDF&Portfolio_ID=@portfolioID" role="button" >Download Report</a>
+	</p>
+</div>
 
 
 <div class="row">
@@ -43,7 +48,7 @@
 <script>
     $(document).ready(function () {
         $.ajax({
-            url: '@Url.Action("PortfolioKPIS", "Portfolio")',
+			url: '@Url.Action("PortfolioKPIS", "Portfolio")',
             data: { portfolioID: @portfolioID},
             //contentType: "application/json; charset=utf-8",
             dataType: "html",

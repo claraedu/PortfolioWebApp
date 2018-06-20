@@ -25,6 +25,7 @@ namespace PortfolioViewer
             BundleConfig.RegisterBundles(BundleTable.Bundles);
 
             ContainerBuilder builder = new ContainerBuilder();
+
             builder.RegisterType<PortfolioRepository>().As<IPortfolioRepository>();
             builder.RegisterAssemblyTypes(Assembly.GetExecutingAssembly())
                 .Where(t => t.Name.EndsWith("Controller"));
