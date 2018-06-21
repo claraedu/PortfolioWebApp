@@ -1,0 +1,43 @@
+﻿@using System.Web.Mvc.Html
+@using Portfolio.Web.Models
+@model Portfolio.Web.Models.SimplePortfolio
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var portolios = (List<SimplePortfolio>) ViewData["portfolios"];
+}
+
+
+<h2>Select a portfolio</h2>
+<select class="form-control" id="portfolioSelect" name="portfolioSelect" onchange="renderPartial(this)">
+    <option value="" selected disabled hidden>Select portfolio</option>
+    @foreach (var item in portolios)
+    {
+        <option value="@item.Id">@item.Name</option>
+    }
+</select>
+
+<div class="row">
+    <div id="partialContainer">
+
+    </div>
+</div>
+
+<script>
+    function renderPartial(p) {
+        $.ajax({
+            url: '@Url.Action("PartialPortfolio","Portfolios")',
+            data: { id: p.value },
+            dataType: "html",
+            success: function(result) {
+                $("#partialContainer").html(result);
+            },
+            error: function error() {
+                alert("WHOOPSIE!");
+            }
+        });
+    }
+</script>
+
+

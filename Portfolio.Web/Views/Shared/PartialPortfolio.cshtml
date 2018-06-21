@@ -1,0 +1,136 @@
+﻿@model Portfolio.Web.Models.PortfolioViewModel
+<div class="form-group">
+    <div class="col-md-12">
+        <h2 id="nameHead"></h2>
+        <p><em id="benchPara"></em></p>
+        
+        <form id="frmRenderReport" action="http://desktop-7lvuu3i/ReportServer_SSRS/Pages/ReportViewer.aspx?%2fReport+Project4%2fReport1" method="post" target="_blank">
+            <input type="hidden" name="rs:Command" value="Render"/>
+            <input type="hidden" name="rc:LinkTarget" value="main"/>
+            <input type="hidden" name="rs:Format" value="HTML5.0"/> <!-- report format -->
+            <input type="hidden" name="rc:Parameters" value="false"/> <!-- display report parameters -->
+            <input type="hidden" name="portfolio_ID" value="1"/> <!-- Parameter 1 -->
+            <button type="submit" class="btn btn-success">Show Report</button>
+        </form>
+        <br/>
+        </div>
+</div>
+<div class="col-lg-3 col-md-3 col-sm-12">
+    <table class="table table-condensed table-responsive" id="assets">
+        <thead>
+            <tr>
+                <th scope="col">Asset</th>
+                <th scope="col">Volume</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+    <table class="table table-condensed table-responsive" id="metrics">
+        <thead>
+            <tr>
+                <th scope="col">Metric</th>
+                <th scope="col">Value</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+</div>
+<div class="col-lg-9 col-md-9 col-sm-12">
+    <table class="table table-condensed table-responsive" id="performance">
+        <thead>
+        <tr></tr>
+        </thead>
+        <tbody>
+        <tr class="perf"></tr>
+        <tr class="bench"></tr>
+        </tbody>
+    </table>
+
+    <canvas id="myChart"></canvas>
+
+</div>
+
+
+
+<script>
+    var modelAsJson = @Html.Raw(Json.Encode(Model));
+  
+    $('#frmRenderReport input[name="portfolio_ID"]').val(modelAsJson.Id.toString());
+   
+    $("#nameHead").html(modelAsJson.Name);
+    $.each(modelAsJson.BenchIndex, function (index, value) {
+        $("#benchPara").append(value + " ");
+        $("#benchPara").append(modelAsJson.IndexWeight[index]*100+"% ");
+    });
+
+    var table = $("#assets tbody");
+    $.each(modelAsJson.Asset, function (index, value) {
+        table.append("<tr><td>" + value + "</td><td>" + modelAsJson.AssetVolume[index] + "</td></tr>");
+    });
+
+    table = $("#metrics tbody");
+    $.each(modelAsJson.PMetrics, function (index, value) {
+        var pm = modelAsJson.PMetricValues[index];
+        var bm = modelAsJson.BMetricValues[index];
+        var final = (bm == 0) ? pm.toFixed(2) : (pm.toFixed(2)).toString() + " (" + (bm.toFixed(2)).toString() + ")";
+        table.append("<tr><td>" + value + "</td><td>" + final + "</td></tr>");
+    });
+
+    table = $("#performance");
+    var head = table.find('thead').find('tr');
+    var perfRow = table.find('tbody').find('tr.perf');
+    var benchRow = table.find('tbody').find('tr.bench');
+    benchRow.append("<td><strong>Benchmark</strong></td>");
+    perfRow.append("<td><strong>Portfolio</strong></td>");
+    head.append("<th>  </th>");
+    $.each(modelAsJson.TimePeriod, function (index, value) {
+        if (modelAsJson.PortfolioPerformance[index] !== 0) {
+            head.append("<th>" + value + "</th>");
+            perfRow.append("<td>" + (100 * modelAsJson.PortfolioPerformance[index]).toFixed(2) + "%" + "</td>");
+            benchRow.append("<td>" + (100 * modelAsJson.BenchmarkPerformance[index]).toFixed(2) + "%" + "</td>");
+        }
+    });
+
+    var ctx = document.getElementById("myChart").getContext("2d");
+    var myChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: modelAsJson.TimePeriod,
+            datasets: [{
+                    label: 'Portfolio',
+                    data: modelAsJson.PortfolioPerformance.map(function (x) { return (x * 100).toFixed(2) }),
+                    backgroundColor: [
+                        'rgba(100, 255, 100, 0.2)'
+                    ],
+                    borderColor: [
+                        'rgba(255,99,132,1)'
+                    ],
+                    borderWidth: 1
+                },
+                {
+                    label: 'Benchmark',
+                    data: modelAsJson.BenchmarkPerformance.map(function (x) { return (x * 100).toFixed(2) }),
+                    backgroundColor: [
+                        'rgba(100, 100, 255, 0.2)'
+                    ],
+                    borderColor: [
+                        'rgba(55,99,132,1)'
+                    ],
+                    borderWidth: 1
+                }]
+        },
+        options: {
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        callback: function(value, index, values) {
+                            return value + '%';
+                        },
+                        beginAtZero: true
+
+                    }
+                }]
+            }
+        }
+    });
+</script>
