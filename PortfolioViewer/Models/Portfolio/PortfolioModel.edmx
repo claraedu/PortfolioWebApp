@@ -24,6 +24,10 @@
         <Function Name="spGetPortfolios" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="Customer_ID" Type="int" Mode="In" />
         </Function>
+        <Function Name="spHasPortfolioPermission" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="UserID" Type="nvarchar" Mode="In" />
+          <Parameter Name="PortfolioID" Type="int" Mode="In" />
+        </Function>
         <EntityContainer Name="PortfolioModelStoreContainer" />
       </Schema></edmx:StorageModels>
     <!-- CSDL content -->
@@ -34,7 +38,7 @@
           <Parameter Name="PortfolioID" Mode="In" Type="Int32" />
           </FunctionImport>
           <FunctionImport Name="GetPortfolios" ReturnType="Collection(PortfolioModel.Portfolio)" >
-            <Parameter Name="Customer_ID" Mode="In" Type="Int32" />
+          <Parameter Name="Customer_ID" Mode="In" Type="Int32" />
           </FunctionImport>
           <FunctionImport Name="GetMonthlyPerformance" ReturnType="Collection(PortfolioModel.MonthlyPerformance)">
           <Parameter Name="Portfolio_ID" Mode="In" Type="Int32" />
@@ -50,7 +54,11 @@
             <Parameter Name="SecurityID" Mode="In" Type="Int32" />
           </FunctionImport>
           <FunctionImport Name="spGetPortfolios">
-            <Parameter Name="Customer_ID" Mode="In" Type="Int32" />
+          <Parameter Name="Customer_ID" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="HasPortfolioPermission" ReturnType="Collection(Boolean)">
+            <Parameter Name="UserID" Mode="In" Type="String" />
+            <Parameter Name="PortfolioID" Mode="In" Type="Int32" />
           </FunctionImport>
         </EntityContainer>
         <ComplexType Name="MonthlyPerformance">
@@ -158,6 +166,7 @@
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="HasPortfolioPermission" FunctionName="PortfolioModel.Store.spHasPortfolioPermission" />
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

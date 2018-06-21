@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
+using Newtonsoft.Json;
+using PortfolioViewer.Interfaces;
 using PortfolioViewer.Models;
 using System;
 using System.Collections.Generic;
@@ -32,6 +34,19 @@ namespace PortfolioViewer.Controllers
 	public class AdminController : Controller
     {
 
+		IPortfolioRepository _PortfolioRepository;
+
+		JsonSerializerSettings _jsonSetting = new JsonSerializerSettings()
+		{
+			NullValueHandling = NullValueHandling.Ignore,
+			Formatting = Formatting.Indented
+		};
+
+		public AdminController(IPortfolioRepository portfolioRepository)
+		{
+			_PortfolioRepository = portfolioRepository;
+		}
+
 		public ApplicationUserManager UserManager
 		{
 			get
@@ -45,8 +60,7 @@ namespace PortfolioViewer.Controllers
         {
 			var user = UserManager.FindById(User.Identity.GetUserId());
 
-			SQLController sqlController = new SQLController();
-			IEnumerable<CustomDBUser> users =  sqlController.adminListUsersAndRoles(user.Id);
+			IEnumerable<CustomDBUser> users = SQLController.adminListUsersAndRoles(user.Id);
 
 			return View(users);
         }
@@ -56,14 +70,28 @@ namespace PortfolioViewer.Controllers
 			return "Im sorry, No can do, Hombre.";
 		}
 
+
+		public ActionResult UserInfo(string userID)
+		{
+			var user = UserManager.FindById(userID);
+
+			var roles = SQLController.adminListRoles();
+			ViewData.Add("roles",roles);
+
+			ViewData.Add("portfolios", _PortfolioRepository.GetPortfolios(user.CustomerID));
+
+
+			return PartialView("_PartialUserInfo",new CustomDBUser());
+		}
+
 	}
 
 	class SQLController
 	{
 
-		private string connectionString = "server=(local)\\SQLEXPRESS;database=Portfolio;integrated Security=SSPI;";
+		private static string connectionString = "server=(local)\\SQLEXPRESS;database=Portfolio;integrated Security=SSPI;";
 
-		public IEnumerable<CustomDBUser> adminListUsersAndRoles(string userID)
+		public static IEnumerable<CustomDBUser> adminListUsersAndRoles(string userID)
 		{
 			try
 			{
@@ -85,11 +113,42 @@ namespace PortfolioViewer.Controllers
 						ID = user.Field<string>("Id"),
 						FirstName = user.Field<string>("FirstName"),
 						LastName = user.Field<string>("LastName"),
-						Role = user.Field<string>("Role"),
-						UserName = user.Field<string>("UserName")
+						Role = user.Field<string>("Role")
+						//UserName = user.Field<string>("UserName")
 					});
 
 					return result;
+				}
+
+			}
+			catch (SqlException e)
+			{
+				Console.Error.WriteLine(e.Message);
+				return null;
+			}
+		}
+
+		public static IEnumerable<Role> adminListRoles()
+		{
+			try
+			{
+				string queryStatement = "EXEC spGetRoleList";
+				using (SqlConnection sqlConn = new SqlConnection(connectionString))
+				{
+					SqlCommand cmd = new SqlCommand(queryStatement, sqlConn);
+					
+					DataTable roleTable = new DataTable("Roles");
+					SqlDataAdapter _dap = new SqlDataAdapter(cmd);
+
+					_dap.Fill(roleTable);
+
+					IEnumerable<Role> roles = roleTable.AsEnumerable().Select(role => new Role
+					{
+						ID = role.Field<string>("Id"),
+						Name = role.Field<string>("Name")
+					});
+
+					return roles;
 				}
 
 			}

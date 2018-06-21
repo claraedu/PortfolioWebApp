@@ -353,7 +353,7 @@
     <Content Include="Views\Portfolio\_PartialKPIS.cshtml" />
     <Content Include="Views\Portfolio\_PartialMonthlyPerformance.cshtml" />
     <Content Include="Views\Admin\Index.cshtml" />
-    <Content Include="Views\Admin\_PartialEditUser.cshtml" />
+    <Content Include="Views\Admin\_PartialUserInfo.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

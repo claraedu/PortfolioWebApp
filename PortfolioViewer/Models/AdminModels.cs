@@ -27,5 +27,21 @@ namespace PortfolioViewer.Models
 		public string UserName { get; set; }
 		public string Role { get; set; }
 	}
+
+	public class Role
+	{
+		public Role()
+		{
+		}
+
+		public Role(string iD, string name)
+		{
+			ID = iD;
+			Name = name;
+		}
+
+		public string ID { get; set; }
+		public string Name { get; set; }
+	}
 	
 }

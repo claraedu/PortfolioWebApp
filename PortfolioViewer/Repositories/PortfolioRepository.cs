@@ -46,5 +46,10 @@ namespace PortfolioViewer.Repositories
         {
             return cpe.GetPortfolios(customerID);
         }
-    }
+
+		public bool HasPortfolioPermissions(string userID, int portfolioID)
+		{
+			return (bool)cpe.HasPortfolioPermission(userID, portfolioID).First();
+		}
+	}
 }

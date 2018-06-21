@@ -16,5 +16,7 @@ namespace PortfolioViewer.Interfaces
         PortfolioInfo GetPortfolioInfo(int portfolioID);
         PortfolioKPIS GetPortfolioKeyPerformanceIndicators(int portfolioID);
         HoldingsDetail GetHoldingsDetail(int portfolioID, int securityID);
+
+		Boolean HasPortfolioPermissions(string userID, int portfolioID);
     }
 }

@@ -31,7 +31,9 @@ namespace PortfolioViewer.Controllers
             _PortfolioRepository = portfolioRepository;
         }
 
-        public ApplicationUserManager UserManager
+
+
+		public ApplicationUserManager UserManager
         {
             get
             {
@@ -54,6 +56,15 @@ namespace PortfolioViewer.Controllers
         [HttpPost, ValidateAntiForgeryToken]
         public ActionResult CustomerPortfolio(Portfolio p)
         {
+
+			var user = UserManager.FindById(User.Identity.GetUserId());
+
+			//AUTHORIZE USER
+			if (!_PortfolioRepository.HasPortfolioPermissions(user.Id, p.Portfolio_ID))
+			{
+				return HttpNotFound();
+			}
+
             ViewData.Add("info", _PortfolioRepository.GetPortfolioInfo(p.Portfolio_ID));
             ViewData.Add("portfolioID",p.Portfolio_ID);
 

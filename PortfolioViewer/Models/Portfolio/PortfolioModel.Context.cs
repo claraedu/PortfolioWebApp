@@ -94,5 +94,18 @@ namespace PortfolioViewer.Models.Portfolio
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("spGetPortfolios", customer_IDParameter);
         }
+    
+        public virtual ObjectResult<Nullable<bool>> HasPortfolioPermission(string userID, Nullable<int> portfolioID)
+        {
+            var userIDParameter = userID != null ?
+                new ObjectParameter("UserID", userID) :
+                new ObjectParameter("UserID", typeof(string));
+    
+            var portfolioIDParameter = portfolioID.HasValue ?
+                new ObjectParameter("PortfolioID", portfolioID) :
+                new ObjectParameter("PortfolioID", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<Nullable<bool>>("HasPortfolioPermission", userIDParameter, portfolioIDParameter);
+        }
     }
 }
