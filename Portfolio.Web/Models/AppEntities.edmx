@@ -1,11 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-
 <edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
   <!-- EF Runtime content -->
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-    <Schema Namespace="AppModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+      <Schema Namespace="AppEntities.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="benchmark">
           <Key>
             <PropertyRef Name="benchmark_id" />
@@ -82,12 +81,10 @@
         <EntityType Name="tblBenchmarkPerformance">
           <Key>
             <PropertyRef Name="fldPortfolioId" />
-            <PropertyRef Name="fldYear" />
-            <PropertyRef Name="fldMonth" />
+            <PropertyRef Name="fldDate" />
           </Key>
           <Property Name="fldPortfolioId" Type="int" Nullable="false" />
-          <Property Name="fldYear" Type="int" Nullable="false" />
-          <Property Name="fldMonth" Type="int" Nullable="false" />
+          <Property Name="fldDate" Type="date" Nullable="false" />
           <Property Name="fldPerformance" Type="decimal" Precision="24" Scale="8" Nullable="false" />
           <Property Name="fldInsertDate" Type="datetime" Nullable="false" />
           <Property Name="fldUser" Type="nvarchar" MaxLength="128" Nullable="false" />
@@ -137,15 +134,29 @@
         <EntityType Name="tblPortfolioPerformance">
           <Key>
             <PropertyRef Name="fldPortfolioId" />
-            <PropertyRef Name="fldYear" />
-            <PropertyRef Name="fldMonth" />
+            <PropertyRef Name="fldDate" />
           </Key>
           <Property Name="fldPortfolioId" Type="int" Nullable="false" />
-          <Property Name="fldYear" Type="int" Nullable="false" />
-          <Property Name="fldMonth" Type="int" Nullable="false" />
+          <Property Name="fldDate" Type="date" Nullable="false" />
           <Property Name="fldPerformance" Type="decimal" Precision="24" Scale="8" Nullable="false" />
           <Property Name="fldInsertDate" Type="datetime" Nullable="false" />
           <Property Name="fldUser" Type="nvarchar" MaxLength="128" Nullable="false" />
+        </EntityType>
+        <EntityType Name="tblTransaction">
+          <Key>
+            <PropertyRef Name="fldTransactionId" />
+          </Key>
+          <Property Name="fldTransactionId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="fldPortfolioId" Type="int" Nullable="false" />
+          <Property Name="fldInstrumentId" Type="int" Nullable="false" />
+          <Property Name="fldTransactionTypeId" Type="int" />
+          <Property Name="fldTradeDate" Type="datetime" />
+          <Property Name="fldSettlementDate" Type="datetime" />
+          <Property Name="fldQuantity" Type="decimal" Precision="24" Scale="8" />
+          <Property Name="fldCost" Type="decimal" Precision="24" Scale="8" />
+          <Property Name="fldPrice" Type="decimal" Precision="24" Scale="8" />
+          <Property Name="fldInsDate" Type="datetime" />
+          <Property Name="fldInsUser" Type="varchar" MaxLength="20" />
         </EntityType>
         <EntityType Name="tblUser">
           <Key>
@@ -160,20 +171,6 @@
           </Key>
           <Property Name="type_id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="name" Type="varchar" MaxLength="255" Nullable="false" />
-        </EntityType>
-        <EntityType Name="transactions">
-          <Key>
-            <PropertyRef Name="portfolio_id" />
-            <PropertyRef Name="instrument_id" />
-          </Key>
-          <Property Name="portfolio_id" Type="int" Nullable="false" />
-          <Property Name="instrument_id" Type="int" Nullable="false" />
-          <Property Name="transaction_id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="transaction_type" Type="int" />
-          <Property Name="price" Type="decimal" Precision="24" Scale="8" />
-          <Property Name="volume" Type="int" />
-          <Property Name="cost" Type="decimal" Precision="24" Scale="8" />
-          <Property Name="date" Type="date" />
         </EntityType>
         <Association Name="FK__benchmark__bench__534D60F1">
           <End Role="benchmark" Type="Self.benchmark" Multiplicity="1" />
@@ -271,39 +268,27 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__transacti__instr__6FE99F9F">
+        <Association Name="FK__tblTransa__fldIn__53A266AC">
           <End Role="instrument" Type="Self.instrument" Multiplicity="1" />
-          <End Role="transactions" Type="Self.transactions" Multiplicity="*" />
+          <End Role="tblTransaction" Type="Self.tblTransaction" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="instrument">
               <PropertyRef Name="instrument_id" />
             </Principal>
-            <Dependent Role="transactions">
-              <PropertyRef Name="instrument_id" />
+            <Dependent Role="tblTransaction">
+              <PropertyRef Name="fldInstrumentId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__transacti__portf__6EF57B66">
+        <Association Name="FK__tblTransa__fldPo__52AE4273">
           <End Role="portfolio" Type="Self.portfolio" Multiplicity="1" />
-          <End Role="transactions" Type="Self.transactions" Multiplicity="*" />
+          <End Role="tblTransaction" Type="Self.tblTransaction" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="portfolio">
               <PropertyRef Name="portfolio_id" />
             </Principal>
-            <Dependent Role="transactions">
-              <PropertyRef Name="portfolio_id" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK__transacti__trans__70DDC3D8">
-          <End Role="transaction_type" Type="Self.transaction_type" Multiplicity="0..1" />
-          <End Role="transactions" Type="Self.transactions" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="transaction_type">
-              <PropertyRef Name="type_id" />
-            </Principal>
-            <Dependent Role="transactions">
-              <PropertyRef Name="transaction_type" />
+            <Dependent Role="tblTransaction">
+              <PropertyRef Name="fldPortfolioId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -316,18 +301,6 @@
             </Principal>
             <Dependent Role="portfolio">
               <PropertyRef Name="owner" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_tblBenchmarkPerformance_portfolio">
-          <End Role="portfolio" Type="Self.portfolio" Multiplicity="1" />
-          <End Role="tblBenchmarkPerformance" Type="Self.tblBenchmarkPerformance" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="portfolio">
-              <PropertyRef Name="portfolio_id" />
-            </Principal>
-            <Dependent Role="tblBenchmarkPerformance">
-              <PropertyRef Name="fldPortfolioId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -355,22 +328,34 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_tblPortfolioPerformance_portfolio">
-          <End Role="portfolio" Type="Self.portfolio" Multiplicity="1" />
-          <End Role="tblPortfolioPerformance" Type="Self.tblPortfolioPerformance" Multiplicity="*" />
+        <Association Name="FK_tblTransaction_type">
+          <End Role="transaction_type" Type="Self.transaction_type" Multiplicity="0..1" />
+          <End Role="tblTransaction" Type="Self.tblTransaction" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="portfolio">
-              <PropertyRef Name="portfolio_id" />
+            <Principal Role="transaction_type">
+              <PropertyRef Name="type_id" />
             </Principal>
-            <Dependent Role="tblPortfolioPerformance">
-              <PropertyRef Name="fldPortfolioId" />
+            <Dependent Role="tblTransaction">
+              <PropertyRef Name="fldTransactionTypeId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Function Name="spBuyTransaction" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="pId" Type="int" Mode="In" />
+          <Parameter Name="instrId" Type="int" Mode="In" />
+          <Parameter Name="date" Type="date" Mode="In" />
+          <Parameter Name="quantity" Type="decimal" Mode="In" />
+        </Function>
         <Function Name="spCalcBenchPerformance" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
         <Function Name="spCalcMarkValue" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
         <Function Name="spGetPortfolios" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
         <Function Name="spImportPriceData" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
+        <Function Name="spSellTransaction" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="pId" Type="int" Mode="In" />
+          <Parameter Name="instrId" Type="int" Mode="In" />
+          <Parameter Name="date" Type="date" Mode="In" />
+          <Parameter Name="quantity" Type="decimal" Mode="In" />
+        </Function>
         <Function Name="spSELPortfolioMetrics" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="pId" Type="int" Mode="In" />
         </Function>
@@ -380,7 +365,7 @@
         <Function Name="spSetBenchPerformance" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
         <Function Name="spSetPortfolioPerformance" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
         <Function Name="spSetPortMarketValue" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
-        <EntityContainer Name="AppModelStoreContainer">
+        <EntityContainer Name="AppEntitiesStoreContainer">
           <EntitySet Name="benchmark" EntityType="Self.benchmark" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="benchmark_index" EntityType="Self.benchmark_index" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="index" EntityType="Self.index" Schema="dbo" store:Type="Tables" />
@@ -395,9 +380,9 @@
           <EntitySet Name="tblInstrumentPrices" EntityType="Self.tblInstrumentPrices" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tblPortfolioMarketValue" EntityType="Self.tblPortfolioMarketValue" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tblPortfolioPerformance" EntityType="Self.tblPortfolioPerformance" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="tblTransaction" EntityType="Self.tblTransaction" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tblUser" EntityType="Self.tblUser" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="transaction_type" EntityType="Self.transaction_type" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="transactions" EntityType="Self.transactions" Schema="dbo" store:Type="Tables" />
           <AssociationSet Name="FK__benchmark__bench__534D60F1" Association="Self.FK__benchmark__bench__534D60F1">
             <End Role="benchmark" EntitySet="benchmark" />
             <End Role="benchmark_index" EntitySet="benchmark_index" />
@@ -430,25 +415,17 @@
             <End Role="instrument" EntitySet="instrument" />
             <End Role="tblInstrumentPrices" EntitySet="tblInstrumentPrices" />
           </AssociationSet>
-          <AssociationSet Name="FK__transacti__instr__6FE99F9F" Association="Self.FK__transacti__instr__6FE99F9F">
+          <AssociationSet Name="FK__tblTransa__fldIn__53A266AC" Association="Self.FK__tblTransa__fldIn__53A266AC">
             <End Role="instrument" EntitySet="instrument" />
-            <End Role="transactions" EntitySet="transactions" />
+            <End Role="tblTransaction" EntitySet="tblTransaction" />
           </AssociationSet>
-          <AssociationSet Name="FK__transacti__portf__6EF57B66" Association="Self.FK__transacti__portf__6EF57B66">
+          <AssociationSet Name="FK__tblTransa__fldPo__52AE4273" Association="Self.FK__tblTransa__fldPo__52AE4273">
             <End Role="portfolio" EntitySet="portfolio" />
-            <End Role="transactions" EntitySet="transactions" />
-          </AssociationSet>
-          <AssociationSet Name="FK__transacti__trans__70DDC3D8" Association="Self.FK__transacti__trans__70DDC3D8">
-            <End Role="transaction_type" EntitySet="transaction_type" />
-            <End Role="transactions" EntitySet="transactions" />
+            <End Role="tblTransaction" EntitySet="tblTransaction" />
           </AssociationSet>
           <AssociationSet Name="FK_portfolio_owner" Association="Self.FK_portfolio_owner">
             <End Role="tblUser" EntitySet="tblUser" />
             <End Role="portfolio" EntitySet="portfolio" />
-          </AssociationSet>
-          <AssociationSet Name="FK_tblBenchmarkPerformance_portfolio" Association="Self.FK_tblBenchmarkPerformance_portfolio">
-            <End Role="portfolio" EntitySet="portfolio" />
-            <End Role="tblBenchmarkPerformance" EntitySet="tblBenchmarkPerformance" />
           </AssociationSet>
           <AssociationSet Name="FK_tblIndexPrices_index" Association="Self.FK_tblIndexPrices_index">
             <End Role="index" EntitySet="index" />
@@ -458,28 +435,24 @@
             <End Role="portfolio" EntitySet="portfolio" />
             <End Role="tblPortfolioMarketValue" EntitySet="tblPortfolioMarketValue" />
           </AssociationSet>
-          <AssociationSet Name="FK_tblPortfolioPerformance_portfolio" Association="Self.FK_tblPortfolioPerformance_portfolio">
-            <End Role="portfolio" EntitySet="portfolio" />
-            <End Role="tblPortfolioPerformance" EntitySet="tblPortfolioPerformance" />
+          <AssociationSet Name="FK_tblTransaction_type" Association="Self.FK_tblTransaction_type">
+            <End Role="transaction_type" EntitySet="transaction_type" />
+            <End Role="tblTransaction" EntitySet="tblTransaction" />
           </AssociationSet>
         </EntityContainer>
-      </Schema></edmx:StorageModels>
+      </Schema>
+    </edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
-      <Schema Namespace="AppModel" Alias="Self" annotation:UseStrongSpatialTypes="false"
-              xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation"
-              xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation"
-              xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+      <Schema Namespace="AppEntities" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
         <EntityType Name="benchmark">
           <Key>
             <PropertyRef Name="benchmark_id" />
           </Key>
           <Property Name="benchmark_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="description" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
-          <NavigationProperty Name="benchmark_index" Relationship="Self.FK__benchmark__bench__534D60F1"
-                              FromRole="benchmark" ToRole="benchmark_index" />
-          <NavigationProperty Name="portfolio_to_benchmark" Relationship="Self.FK__portfolio__bench__5812160E"
-                              FromRole="benchmark" ToRole="portfolio_to_benchmark" />
+          <NavigationProperty Name="benchmark_index" Relationship="Self.FK__benchmark__bench__534D60F1" FromRole="benchmark" ToRole="benchmark_index" />
+          <NavigationProperty Name="portfolio_to_benchmark" Relationship="Self.FK__portfolio__bench__5812160E" FromRole="benchmark" ToRole="portfolio_to_benchmark" />
         </EntityType>
         <EntityType Name="benchmark_index">
           <Key>
@@ -489,10 +462,8 @@
           <Property Name="benchmark_id" Type="Int32" Nullable="false" />
           <Property Name="index_id" Type="Int32" Nullable="false" />
           <Property Name="weight" Type="Double" Nullable="false" />
-          <NavigationProperty Name="benchmark" Relationship="Self.FK__benchmark__bench__534D60F1"
-                              FromRole="benchmark_index" ToRole="benchmark" />
-          <NavigationProperty Name="index" Relationship="Self.FK__benchmark__index__5441852A"
-                              FromRole="benchmark_index" ToRole="index" />
+          <NavigationProperty Name="benchmark" Relationship="Self.FK__benchmark__bench__534D60F1" FromRole="benchmark_index" ToRole="benchmark" />
+          <NavigationProperty Name="index" Relationship="Self.FK__benchmark__index__5441852A" FromRole="benchmark_index" ToRole="index" />
         </EntityType>
         <EntityType Name="index">
           <Key>
@@ -501,10 +472,8 @@
           <Property Name="index_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="name" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
           <Property Name="description" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
-          <NavigationProperty Name="benchmark_index" Relationship="Self.FK__benchmark__index__5441852A"
-                              FromRole="index" ToRole="benchmark_index" />
-          <NavigationProperty Name="tblIndexPrices" Relationship="Self.FK_tblIndexPrices_index" FromRole="index"
-                              ToRole="tblIndexPrices" />
+          <NavigationProperty Name="benchmark_index" Relationship="Self.FK__benchmark__index__5441852A" FromRole="index" ToRole="benchmark_index" />
+          <NavigationProperty Name="tblIndexPrices" Relationship="Self.FK_tblIndexPrices_index" FromRole="index" ToRole="tblIndexPrices" />
         </EntityType>
         <EntityType Name="instrument">
           <Key>
@@ -514,14 +483,10 @@
           <Property Name="name" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
           <Property Name="instrument_type_id" Type="Int32" />
           <Property Name="description" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
-          <NavigationProperty Name="instrument_type" Relationship="Self.FK__instrumen__instr__398D8EEE"
-                              FromRole="instrument" ToRole="instrument_type" />
-          <NavigationProperty Name="position" Relationship="Self.FK__position__instru__4F7CD00D" FromRole="instrument"
-                              ToRole="position" />
-          <NavigationProperty Name="tblInstrumentPrices" Relationship="Self.FK__tblPrices__fldId__797309D9"
-                              FromRole="instrument" ToRole="tblInstrumentPrices" />
-          <NavigationProperty Name="transactions" Relationship="Self.FK__transacti__instr__6FE99F9F"
-                              FromRole="instrument" ToRole="transactions" />
+          <NavigationProperty Name="instrument_type" Relationship="Self.FK__instrumen__instr__398D8EEE" FromRole="instrument" ToRole="instrument_type" />
+          <NavigationProperty Name="position" Relationship="Self.FK__position__instru__4F7CD00D" FromRole="instrument" ToRole="position" />
+          <NavigationProperty Name="tblInstrumentPrices" Relationship="Self.FK__tblPrices__fldId__797309D9" FromRole="instrument" ToRole="tblInstrumentPrices" />
+          <NavigationProperty Name="tblTransaction" Relationship="Self.FK__tblTransa__fldIn__53A266AC" FromRole="instrument" ToRole="tblTransaction" />
         </EntityType>
         <EntityType Name="instrument_type">
           <Key>
@@ -529,8 +494,7 @@
           </Key>
           <Property Name="instrument_type_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="name" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
-          <NavigationProperty Name="instrument" Relationship="Self.FK__instrumen__instr__398D8EEE"
-                              FromRole="instrument_type" ToRole="instrument" />
+          <NavigationProperty Name="instrument" Relationship="Self.FK__instrumen__instr__398D8EEE" FromRole="instrument_type" ToRole="instrument" />
         </EntityType>
         <EntityType Name="portfolio">
           <Key>
@@ -540,20 +504,12 @@
           <Property Name="name" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
           <Property Name="date_created" Type="DateTime" Precision="0" />
           <Property Name="date_last_changed" Type="DateTime" Precision="0" />
-          <NavigationProperty Name="portfolio_to_benchmark" Relationship="Self.FK__portfolio__portf__571DF1D5"
-                              FromRole="portfolio" ToRole="portfolio_to_benchmark" />
-          <NavigationProperty Name="position" Relationship="Self.FK__position__portfo__4E88ABD4" FromRole="portfolio"
-                              ToRole="position" />
-          <NavigationProperty Name="transactions" Relationship="Self.FK__transacti__portf__6EF57B66"
-                              FromRole="portfolio" ToRole="transactions" />
-          <NavigationProperty Name="tblBenchmarkPerformance" Relationship="Self.FK_tblBenchmarkPerformance_portfolio"
-                              FromRole="portfolio" ToRole="tblBenchmarkPerformance" />
-          <NavigationProperty Name="tblPortfolioMarketValue" Relationship="Self.FK_tblPortfolioMarketValue_portfolio"
-                              FromRole="portfolio" ToRole="tblPortfolioMarketValue" />
-          <NavigationProperty Name="tblPortfolioPerformance" Relationship="Self.FK_tblPortfolioPerformance_portfolio"
-                              FromRole="portfolio" ToRole="tblPortfolioPerformance" />
           <Property Name="owner" Type="Int32" Nullable="false" />
-          <NavigationProperty Name="tblUser" Relationship="AppModel.FK_portfolio_owner" FromRole="portfolio" ToRole="tblUser" />
+          <NavigationProperty Name="portfolio_to_benchmark" Relationship="Self.FK__portfolio__portf__571DF1D5" FromRole="portfolio" ToRole="portfolio_to_benchmark" />
+          <NavigationProperty Name="position" Relationship="Self.FK__position__portfo__4E88ABD4" FromRole="portfolio" ToRole="position" />
+          <NavigationProperty Name="tblTransaction" Relationship="Self.FK__tblTransa__fldPo__52AE4273" FromRole="portfolio" ToRole="tblTransaction" />
+          <NavigationProperty Name="tblUser" Relationship="Self.FK_portfolio_owner" FromRole="portfolio" ToRole="tblUser" />
+          <NavigationProperty Name="tblPortfolioMarketValue" Relationship="Self.FK_tblPortfolioMarketValue_portfolio" FromRole="portfolio" ToRole="tblPortfolioMarketValue" />
         </EntityType>
         <EntityType Name="portfolio_to_benchmark">
           <Key>
@@ -566,10 +522,8 @@
           <Property Name="benchmark_id" Type="Int32" Nullable="false" />
           <Property Name="date_from" Type="DateTime" Nullable="false" Precision="0" />
           <Property Name="date_to" Type="DateTime" Nullable="false" Precision="0" />
-          <NavigationProperty Name="benchmark" Relationship="Self.FK__portfolio__bench__5812160E"
-                              FromRole="portfolio_to_benchmark" ToRole="benchmark" />
-          <NavigationProperty Name="portfolio" Relationship="Self.FK__portfolio__portf__571DF1D5"
-                              FromRole="portfolio_to_benchmark" ToRole="portfolio" />
+          <NavigationProperty Name="benchmark" Relationship="Self.FK__portfolio__bench__5812160E" FromRole="portfolio_to_benchmark" ToRole="benchmark" />
+          <NavigationProperty Name="portfolio" Relationship="Self.FK__portfolio__portf__571DF1D5" FromRole="portfolio_to_benchmark" ToRole="portfolio" />
         </EntityType>
         <EntityType Name="position">
           <Key>
@@ -581,25 +535,19 @@
           <Property Name="instrument_id" Type="Int32" Nullable="false" />
           <Property Name="evaluation_date" Type="DateTime" Nullable="false" Precision="0" />
           <Property Name="volume" Type="Int32" Nullable="false" />
-          <NavigationProperty Name="instrument" Relationship="Self.FK__position__instru__4F7CD00D" FromRole="position"
-                              ToRole="instrument" />
-          <NavigationProperty Name="portfolio" Relationship="Self.FK__position__portfo__4E88ABD4" FromRole="position"
-                              ToRole="portfolio" />
+          <NavigationProperty Name="instrument" Relationship="Self.FK__position__instru__4F7CD00D" FromRole="position" ToRole="instrument" />
+          <NavigationProperty Name="portfolio" Relationship="Self.FK__position__portfo__4E88ABD4" FromRole="position" ToRole="portfolio" />
         </EntityType>
         <EntityType Name="tblBenchmarkPerformance">
           <Key>
             <PropertyRef Name="fldPortfolioId" />
-            <PropertyRef Name="fldYear" />
-            <PropertyRef Name="fldMonth" />
+            <PropertyRef Name="fldDate" />
           </Key>
           <Property Name="fldPortfolioId" Type="Int32" Nullable="false" />
-          <Property Name="fldYear" Type="Int32" Nullable="false" />
-          <Property Name="fldMonth" Type="Int32" Nullable="false" />
+          <Property Name="fldDate" Type="DateTime" Nullable="false" Precision="0" />
           <Property Name="fldPerformance" Type="Decimal" Precision="24" Scale="8" Nullable="false" />
           <Property Name="fldInsertDate" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="fldUser" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
-          <NavigationProperty Name="portfolio" Relationship="Self.FK_tblBenchmarkPerformance_portfolio"
-                              FromRole="tblBenchmarkPerformance" ToRole="portfolio" />
         </EntityType>
         <EntityType Name="tblImportPrices">
           <Key>
@@ -620,8 +568,7 @@
           <Property Name="fldPrice" Type="Decimal" Precision="24" Scale="8" Nullable="false" />
           <Property Name="fldInsertDate" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="fldUser" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
-          <NavigationProperty Name="index" Relationship="Self.FK_tblIndexPrices_index" FromRole="tblIndexPrices"
-                              ToRole="index" />
+          <NavigationProperty Name="index" Relationship="Self.FK_tblIndexPrices_index" FromRole="tblIndexPrices" ToRole="index" />
         </EntityType>
         <EntityType Name="tblInstrumentPrices">
           <Key>
@@ -633,8 +580,7 @@
           <Property Name="fldPrice" Type="Decimal" Precision="24" Scale="8" Nullable="false" />
           <Property Name="fldInsertDate" Type="DateTime" Precision="3" />
           <Property Name="fldUser" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <NavigationProperty Name="instrument" Relationship="Self.FK__tblPrices__fldId__797309D9"
-                              FromRole="tblInstrumentPrices" ToRole="instrument" />
+          <NavigationProperty Name="instrument" Relationship="Self.FK__tblPrices__fldId__797309D9" FromRole="tblInstrumentPrices" ToRole="instrument" />
         </EntityType>
         <EntityType Name="tblPortfolioMarketValue">
           <Key>
@@ -646,23 +592,45 @@
           <Property Name="fldValue" Type="Decimal" Precision="24" Scale="8" Nullable="false" />
           <Property Name="fldInsertDate" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="fldUser" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
-          <NavigationProperty Name="portfolio" Relationship="Self.FK_tblPortfolioMarketValue_portfolio"
-                              FromRole="tblPortfolioMarketValue" ToRole="portfolio" />
+          <NavigationProperty Name="portfolio" Relationship="Self.FK_tblPortfolioMarketValue_portfolio" FromRole="tblPortfolioMarketValue" ToRole="portfolio" />
         </EntityType>
         <EntityType Name="tblPortfolioPerformance">
           <Key>
             <PropertyRef Name="fldPortfolioId" />
-            <PropertyRef Name="fldYear" />
-            <PropertyRef Name="fldMonth" />
+            <PropertyRef Name="fldDate" />
           </Key>
           <Property Name="fldPortfolioId" Type="Int32" Nullable="false" />
-          <Property Name="fldYear" Type="Int32" Nullable="false" />
-          <Property Name="fldMonth" Type="Int32" Nullable="false" />
+          <Property Name="fldDate" Type="DateTime" Nullable="false" Precision="0" />
           <Property Name="fldPerformance" Type="Decimal" Precision="24" Scale="8" Nullable="false" />
           <Property Name="fldInsertDate" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="fldUser" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
-          <NavigationProperty Name="portfolio" Relationship="Self.FK_tblPortfolioPerformance_portfolio"
-                              FromRole="tblPortfolioPerformance" ToRole="portfolio" />
+        </EntityType>
+        <EntityType Name="tblTransaction">
+          <Key>
+            <PropertyRef Name="fldTransactionId" />
+          </Key>
+          <Property Name="fldTransactionId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="fldPortfolioId" Type="Int32" Nullable="false" />
+          <Property Name="fldInstrumentId" Type="Int32" Nullable="false" />
+          <Property Name="fldTransactionTypeId" Type="Int32" />
+          <Property Name="fldTradeDate" Type="DateTime" Precision="3" />
+          <Property Name="fldSettlementDate" Type="DateTime" Precision="3" />
+          <Property Name="fldQuantity" Type="Decimal" Precision="24" Scale="8" />
+          <Property Name="fldCost" Type="Decimal" Precision="24" Scale="8" />
+          <Property Name="fldPrice" Type="Decimal" Precision="24" Scale="8" />
+          <Property Name="fldInsDate" Type="DateTime" Precision="3" />
+          <Property Name="fldInsUser" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="instrument" Relationship="Self.FK__tblTransa__fldIn__53A266AC" FromRole="tblTransaction" ToRole="instrument" />
+          <NavigationProperty Name="portfolio" Relationship="Self.FK__tblTransa__fldPo__52AE4273" FromRole="tblTransaction" ToRole="portfolio" />
+          <NavigationProperty Name="transaction_type" Relationship="Self.FK_tblTransaction_type" FromRole="tblTransaction" ToRole="transaction_type" />
+        </EntityType>
+        <EntityType Name="tblUser">
+          <Key>
+            <PropertyRef Name="fldId" />
+          </Key>
+          <Property Name="fldId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="fldGuid" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
+          <NavigationProperty Name="portfolio" Relationship="Self.FK_portfolio_owner" FromRole="tblUser" ToRole="portfolio" />
         </EntityType>
         <EntityType Name="transaction_type">
           <Key>
@@ -670,28 +638,7 @@
           </Key>
           <Property Name="type_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="name" Type="String" MaxLength="255" FixedLength="false" Unicode="false" Nullable="false" />
-          <NavigationProperty Name="transactions" Relationship="Self.FK__transacti__trans__70DDC3D8"
-                              FromRole="transaction_type" ToRole="transactions" />
-        </EntityType>
-        <EntityType Name="transactions">
-          <Key>
-            <PropertyRef Name="portfolio_id" />
-            <PropertyRef Name="instrument_id" />
-          </Key>
-          <Property Name="portfolio_id" Type="Int32" Nullable="false" />
-          <Property Name="instrument_id" Type="Int32" Nullable="false" />
-          <Property Name="transaction_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="transaction_type" Type="Int32" />
-          <Property Name="price" Type="Decimal" Precision="24" Scale="8" />
-          <Property Name="volume" Type="Int32" />
-          <Property Name="cost" Type="Decimal" Precision="24" Scale="8" />
-          <Property Name="date" Type="DateTime" Precision="0" />
-          <NavigationProperty Name="instrument" Relationship="Self.FK__transacti__instr__6FE99F9F"
-                              FromRole="transactions" ToRole="instrument" />
-          <NavigationProperty Name="portfolio" Relationship="Self.FK__transacti__portf__6EF57B66"
-                              FromRole="transactions" ToRole="portfolio" />
-          <NavigationProperty Name="transaction_type1" Relationship="Self.FK__transacti__trans__70DDC3D8"
-                              FromRole="transactions" ToRole="transaction_type" />
+          <NavigationProperty Name="tblTransaction" Relationship="Self.FK_tblTransaction_type" FromRole="transaction_type" ToRole="tblTransaction" />
         </EntityType>
         <Association Name="FK__benchmark__bench__534D60F1">
           <End Role="benchmark" Type="Self.benchmark" Multiplicity="1" />
@@ -777,15 +724,15 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__transacti__instr__6FE99F9F">
+        <Association Name="FK__tblTransa__fldIn__53A266AC">
           <End Role="instrument" Type="Self.instrument" Multiplicity="1" />
-          <End Role="transactions" Type="Self.transactions" Multiplicity="*" />
+          <End Role="tblTransaction" Type="Self.tblTransaction" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="instrument">
               <PropertyRef Name="instrument_id" />
             </Principal>
-            <Dependent Role="transactions">
-              <PropertyRef Name="instrument_id" />
+            <Dependent Role="tblTransaction">
+              <PropertyRef Name="fldInstrumentId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -813,27 +760,27 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__transacti__portf__6EF57B66">
+        <Association Name="FK__tblTransa__fldPo__52AE4273">
           <End Role="portfolio" Type="Self.portfolio" Multiplicity="1" />
-          <End Role="transactions" Type="Self.transactions" Multiplicity="*" />
+          <End Role="tblTransaction" Type="Self.tblTransaction" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="portfolio">
               <PropertyRef Name="portfolio_id" />
             </Principal>
-            <Dependent Role="transactions">
-              <PropertyRef Name="portfolio_id" />
+            <Dependent Role="tblTransaction">
+              <PropertyRef Name="fldPortfolioId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_tblBenchmarkPerformance_portfolio">
-          <End Role="portfolio" Type="Self.portfolio" Multiplicity="1" />
-          <End Role="tblBenchmarkPerformance" Type="Self.tblBenchmarkPerformance" Multiplicity="*" />
+        <Association Name="FK_portfolio_owner">
+          <End Role="tblUser" Type="Self.tblUser" Multiplicity="1" />
+          <End Role="portfolio" Type="Self.portfolio" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="portfolio">
-              <PropertyRef Name="portfolio_id" />
+            <Principal Role="tblUser">
+              <PropertyRef Name="fldId" />
             </Principal>
-            <Dependent Role="tblBenchmarkPerformance">
-              <PropertyRef Name="fldPortfolioId" />
+            <Dependent Role="portfolio">
+              <PropertyRef Name="owner" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -849,31 +796,19 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_tblPortfolioPerformance_portfolio">
-          <End Role="portfolio" Type="Self.portfolio" Multiplicity="1" />
-          <End Role="tblPortfolioPerformance" Type="Self.tblPortfolioPerformance" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="portfolio">
-              <PropertyRef Name="portfolio_id" />
-            </Principal>
-            <Dependent Role="tblPortfolioPerformance">
-              <PropertyRef Name="fldPortfolioId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK__transacti__trans__70DDC3D8">
+        <Association Name="FK_tblTransaction_type">
           <End Role="transaction_type" Type="Self.transaction_type" Multiplicity="0..1" />
-          <End Role="transactions" Type="Self.transactions" Multiplicity="*" />
+          <End Role="tblTransaction" Type="Self.tblTransaction" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="transaction_type">
               <PropertyRef Name="type_id" />
             </Principal>
-            <Dependent Role="transactions">
-              <PropertyRef Name="transaction_type" />
+            <Dependent Role="tblTransaction">
+              <PropertyRef Name="fldTransactionTypeId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <EntityContainer Name="AppEntities" annotation:LazyLoadingEnabled="true">
+        <EntityContainer Name="AppEntitties" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="benchmark" EntityType="Self.benchmark" />
           <EntitySet Name="benchmark_index" EntityType="Self.benchmark_index" />
           <EntitySet Name="index" EntityType="Self.index" />
@@ -888,8 +823,9 @@
           <EntitySet Name="tblInstrumentPrices" EntityType="Self.tblInstrumentPrices" />
           <EntitySet Name="tblPortfolioMarketValue" EntityType="Self.tblPortfolioMarketValue" />
           <EntitySet Name="tblPortfolioPerformance" EntityType="Self.tblPortfolioPerformance" />
+          <EntitySet Name="tblTransaction" EntityType="Self.tblTransaction" />
+          <EntitySet Name="tblUser" EntityType="Self.tblUser" />
           <EntitySet Name="transaction_type" EntityType="Self.transaction_type" />
-          <EntitySet Name="transactions" EntityType="Self.transactions" />
           <AssociationSet Name="FK__benchmark__bench__534D60F1" Association="Self.FK__benchmark__bench__534D60F1">
             <End Role="benchmark" EntitySet="benchmark" />
             <End Role="benchmark_index" EntitySet="benchmark_index" />
@@ -918,9 +854,9 @@
             <End Role="instrument" EntitySet="instrument" />
             <End Role="tblInstrumentPrices" EntitySet="tblInstrumentPrices" />
           </AssociationSet>
-          <AssociationSet Name="FK__transacti__instr__6FE99F9F" Association="Self.FK__transacti__instr__6FE99F9F">
+          <AssociationSet Name="FK__tblTransa__fldIn__53A266AC" Association="Self.FK__tblTransa__fldIn__53A266AC">
             <End Role="instrument" EntitySet="instrument" />
-            <End Role="transactions" EntitySet="transactions" />
+            <End Role="tblTransaction" EntitySet="tblTransaction" />
           </AssociationSet>
           <AssociationSet Name="FK__portfolio__portf__571DF1D5" Association="Self.FK__portfolio__portf__571DF1D5">
             <End Role="portfolio" EntitySet="portfolio" />
@@ -930,67 +866,57 @@
             <End Role="portfolio" EntitySet="portfolio" />
             <End Role="position" EntitySet="position" />
           </AssociationSet>
-          <AssociationSet Name="FK__transacti__portf__6EF57B66" Association="Self.FK__transacti__portf__6EF57B66">
+          <AssociationSet Name="FK__tblTransa__fldPo__52AE4273" Association="Self.FK__tblTransa__fldPo__52AE4273">
             <End Role="portfolio" EntitySet="portfolio" />
-            <End Role="transactions" EntitySet="transactions" />
+            <End Role="tblTransaction" EntitySet="tblTransaction" />
           </AssociationSet>
-          <AssociationSet Name="FK_tblBenchmarkPerformance_portfolio"
-                          Association="Self.FK_tblBenchmarkPerformance_portfolio">
+          <AssociationSet Name="FK_portfolio_owner" Association="Self.FK_portfolio_owner">
+            <End Role="tblUser" EntitySet="tblUser" />
             <End Role="portfolio" EntitySet="portfolio" />
-            <End Role="tblBenchmarkPerformance" EntitySet="tblBenchmarkPerformance" />
           </AssociationSet>
-          <AssociationSet Name="FK_tblPortfolioMarketValue_portfolio"
-                          Association="Self.FK_tblPortfolioMarketValue_portfolio">
+          <AssociationSet Name="FK_tblPortfolioMarketValue_portfolio" Association="Self.FK_tblPortfolioMarketValue_portfolio">
             <End Role="portfolio" EntitySet="portfolio" />
             <End Role="tblPortfolioMarketValue" EntitySet="tblPortfolioMarketValue" />
           </AssociationSet>
-          <AssociationSet Name="FK_tblPortfolioPerformance_portfolio"
-                          Association="Self.FK_tblPortfolioPerformance_portfolio">
-            <End Role="portfolio" EntitySet="portfolio" />
-            <End Role="tblPortfolioPerformance" EntitySet="tblPortfolioPerformance" />
-          </AssociationSet>
-          <AssociationSet Name="FK__transacti__trans__70DDC3D8" Association="Self.FK__transacti__trans__70DDC3D8">
+          <AssociationSet Name="FK_tblTransaction_type" Association="Self.FK_tblTransaction_type">
             <End Role="transaction_type" EntitySet="transaction_type" />
-            <End Role="transactions" EntitySet="transactions" />
+            <End Role="tblTransaction" EntitySet="tblTransaction" />
           </AssociationSet>
-          <FunctionImport Name="spCalcBenchPerformance" ReturnType="Collection(AppModel.spCalcBenchPerformance_Result)" />
-          <FunctionImport Name="spCalcMarkValue" ReturnType="Collection(AppModel.spCalcMarkValue_Result)" />
-          <FunctionImport Name="spGetPortfolios" ReturnType="Collection(AppModel.spGetPortfolios_Result)" />
-          <FunctionImport Name="spImportPriceData" />
-          <FunctionImport Name="spSELPortfolioMetrics" ReturnType="Collection(AppModel.spSELPortfolioMetrics_Result)" >
-          <Parameter Name="pId" Mode="In" Type="Int32" />
+          <FunctionImport Name="spBuyTransaction">
+            <Parameter Name="pId" Mode="In" Type="Int32" />
+            <Parameter Name="instrId" Mode="In" Type="Int32" />
+            <Parameter Name="date" Mode="In" Type="DateTime" />
+            <Parameter Name="quantity" Mode="In" Type="Decimal" />
           </FunctionImport>
-          <FunctionImport Name="spSELPortfolioReport" ReturnType="Collection(AppModel.spSELPortfolioReport_Result)" >
-          <Parameter Name="pID" Mode="In" Type="Int32" />
+          <FunctionImport Name="spCalcBenchPerformance" ReturnType="Collection(AppEntities.spCalcBenchPerformance_Result)" />
+          <FunctionImport Name="spCalcMarkValue" ReturnType="Collection(AppEntities.spCalcMarkValue_Result)" />
+          <FunctionImport Name="spGetPortfolios" ReturnType="Collection(AppEntities.spGetPortfolios_Result)" />
+          <FunctionImport Name="spImportPriceData" />
+          <FunctionImport Name="spSellTransaction">
+            <Parameter Name="pId" Mode="In" Type="Int32" />
+            <Parameter Name="instrId" Mode="In" Type="Int32" />
+            <Parameter Name="date" Mode="In" Type="DateTime" />
+            <Parameter Name="quantity" Mode="In" Type="Decimal" />
+          </FunctionImport>
+          <FunctionImport Name="spSELPortfolioMetrics" ReturnType="Collection(AppEntities.spSELPortfolioMetrics_Result)">
+            <Parameter Name="pId" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="spSELPortfolioReport" ReturnType="Collection(AppEntities.spSELPortfolioReport_Result)">
+            <Parameter Name="pID" Mode="In" Type="Int32" />
           </FunctionImport>
           <FunctionImport Name="spSetBenchPerformance" />
           <FunctionImport Name="spSetPortfolioPerformance" />
           <FunctionImport Name="spSetPortMarketValue" />
-          <FunctionImport Name="GetMetrics" ReturnType="Collection(AppModel.GetMetrics_Result)" >
-          <Parameter Name="pId" Mode="In" Type="Int32" />
-          </FunctionImport>
-          <FunctionImport Name="GetReport" ReturnType="Collection(AppModel.GetReport_Result)" >
-          <Parameter Name="pID" Mode="In" Type="Int32" />
-          </FunctionImport>
-          <EntitySet Name="tblUser" EntityType="AppModel.tblUser" />
-          <AssociationSet Name="FK_portfolio_owner" Association="AppModel.FK_portfolio_owner">
-            <End Role="tblUser" EntitySet="tblUser" />
-            <End Role="portfolio" EntitySet="portfolio" />
-          </AssociationSet>
         </EntityContainer>
         <ComplexType Name="spCalcBenchPerformance_Result">
           <Property Type="Int32" Name="fldPortfolioId" Nullable="false" />
           <Property Type="DateTime" Name="fldDate" Nullable="false" />
-          <Property Type="Double" Name="fldPerformance" Nullable="true" />
-          <Property Type="DateTime" Name="fldInsertDate" Nullable="false" Precision="23" />
-          <Property Type="String" Name="fldUser" Nullable="true" MaxLength="128" />
+          <Property Type="Double" Name="fldTotal" Nullable="true" />
         </ComplexType>
         <ComplexType Name="spCalcMarkValue_Result">
           <Property Type="Int32" Name="fldPortfolioId" Nullable="false" />
           <Property Type="DateTime" Name="fldDate" Nullable="false" />
-          <Property Type="Double" Name="fldMarketValue" Nullable="true" />
-          <Property Type="DateTime" Name="fldInsertDate" Nullable="false" Precision="23" />
-          <Property Type="String" Name="fldUser" Nullable="true" MaxLength="128" />
+          <Property Type="Decimal" Name="fldMarketValue" Nullable="true" Precision="38" Scale="6" />
         </ComplexType>
         <ComplexType Name="spGetPortfolios_Result">
           <Property Type="Int32" Name="portfolio_id" Nullable="false" />
@@ -1005,55 +931,20 @@
         <ComplexType Name="spSELPortfolioReport_Result">
           <Property Type="Int32" Name="fldPortfolioId" Nullable="false" />
           <Property Type="String" Name="fldName" Nullable="true" MaxLength="255" />
-          <Property Type="Int32" Name="fldYear" Nullable="false" />
-          <Property Type="Int32" Name="fldMonthId" Nullable="false" />
+          <Property Type="Int32" Name="fldYear" Nullable="true" />
+          <Property Type="Int32" Name="fldMonthId" Nullable="true" />
           <Property Type="String" Name="fldMonth" Nullable="true" MaxLength="30" />
           <Property Type="String" Name="fldPerformance" Nullable="false" MaxLength="9" />
-          <Property Type="Decimal" Name="fldValue" Nullable="false" Precision="24" Scale="8" />
-        </ComplexType>
-        <ComplexType Name="GetMetrics_Result">
-          <Property Type="Int32" Name="fldId" Nullable="false" />
-          <Property Type="String" Name="fldType" Nullable="false" MaxLength="9" />
-          <Property Type="String" Name="fldMetric" Nullable="false" MaxLength="10" />
           <Property Type="Double" Name="fldValue" Nullable="true" />
         </ComplexType>
-        <ComplexType Name="GetReport_Result">
-          <Property Type="Int32" Name="fldPortfolioId" Nullable="false" />
-          <Property Type="String" Name="fldName" Nullable="true" MaxLength="255" />
-          <Property Type="Int32" Name="fldYear" Nullable="false" />
-          <Property Type="Int32" Name="fldMonthId" Nullable="false" />
-          <Property Type="String" Name="fldMonth" Nullable="true" MaxLength="30" />
-          <Property Type="String" Name="fldPerformance" Nullable="false" MaxLength="9" />
-          <Property Type="Decimal" Name="fldValue" Nullable="false" Precision="24" Scale="8" />
-        </ComplexType>
-        <EntityType Name="tblUser">
-          <Key>
-            <PropertyRef Name="fldId" />
-          </Key>
-          <Property Name="fldId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="fldGuid" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
-          <NavigationProperty Name="portfolio" Relationship="AppModel.FK_portfolio_owner" FromRole="tblUser" ToRole="portfolio" />
-        </EntityType>
-        <Association Name="FK_portfolio_owner">
-          <End Type="AppModel.tblUser" Role="tblUser" Multiplicity="1" />
-          <End Type="AppModel.portfolio" Role="portfolio" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="tblUser">
-              <PropertyRef Name="fldId" />
-            </Principal>
-            <Dependent Role="portfolio">
-              <PropertyRef Name="owner" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
     <edmx:Mappings>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
-        <EntityContainerMapping StorageEntityContainer="AppModelStoreContainer" CdmEntityContainer="AppEntities">
+        <EntityContainerMapping StorageEntityContainer="AppEntitiesStoreContainer" CdmEntityContainer="AppEntitties">
           <EntitySetMapping Name="benchmark">
-            <EntityTypeMapping TypeName="AppModel.benchmark">
+            <EntityTypeMapping TypeName="AppEntities.benchmark">
               <MappingFragment StoreEntitySet="benchmark">
                 <ScalarProperty Name="benchmark_id" ColumnName="benchmark_id" />
                 <ScalarProperty Name="description" ColumnName="description" />
@@ -1061,7 +952,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="benchmark_index">
-            <EntityTypeMapping TypeName="AppModel.benchmark_index">
+            <EntityTypeMapping TypeName="AppEntities.benchmark_index">
               <MappingFragment StoreEntitySet="benchmark_index">
                 <ScalarProperty Name="benchmark_id" ColumnName="benchmark_id" />
                 <ScalarProperty Name="index_id" ColumnName="index_id" />
@@ -1070,7 +961,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="index">
-            <EntityTypeMapping TypeName="AppModel.index">
+            <EntityTypeMapping TypeName="AppEntities.index">
               <MappingFragment StoreEntitySet="index">
                 <ScalarProperty Name="index_id" ColumnName="index_id" />
                 <ScalarProperty Name="name" ColumnName="name" />
@@ -1079,7 +970,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="instrument">
-            <EntityTypeMapping TypeName="AppModel.instrument">
+            <EntityTypeMapping TypeName="AppEntities.instrument">
               <MappingFragment StoreEntitySet="instrument">
                 <ScalarProperty Name="instrument_id" ColumnName="instrument_id" />
                 <ScalarProperty Name="name" ColumnName="name" />
@@ -1089,7 +980,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="instrument_type">
-            <EntityTypeMapping TypeName="AppModel.instrument_type">
+            <EntityTypeMapping TypeName="AppEntities.instrument_type">
               <MappingFragment StoreEntitySet="instrument_type">
                 <ScalarProperty Name="instrument_type_id" ColumnName="instrument_type_id" />
                 <ScalarProperty Name="name" ColumnName="name" />
@@ -1097,18 +988,18 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="portfolio">
-            <EntityTypeMapping TypeName="AppModel.portfolio">
+            <EntityTypeMapping TypeName="AppEntities.portfolio">
               <MappingFragment StoreEntitySet="portfolio">
-                <ScalarProperty Name="owner" ColumnName="owner" />
                 <ScalarProperty Name="portfolio_id" ColumnName="portfolio_id" />
                 <ScalarProperty Name="name" ColumnName="name" />
                 <ScalarProperty Name="date_created" ColumnName="date_created" />
                 <ScalarProperty Name="date_last_changed" ColumnName="date_last_changed" />
+                <ScalarProperty Name="owner" ColumnName="owner" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="portfolio_to_benchmark">
-            <EntityTypeMapping TypeName="AppModel.portfolio_to_benchmark">
+            <EntityTypeMapping TypeName="AppEntities.portfolio_to_benchmark">
               <MappingFragment StoreEntitySet="portfolio_to_benchmark">
                 <ScalarProperty Name="portfolio_id" ColumnName="portfolio_id" />
                 <ScalarProperty Name="benchmark_id" ColumnName="benchmark_id" />
@@ -1118,7 +1009,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="position">
-            <EntityTypeMapping TypeName="AppModel.position">
+            <EntityTypeMapping TypeName="AppEntities.position">
               <MappingFragment StoreEntitySet="position">
                 <ScalarProperty Name="portfolio_id" ColumnName="portfolio_id" />
                 <ScalarProperty Name="instrument_id" ColumnName="instrument_id" />
@@ -1128,11 +1019,10 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="tblBenchmarkPerformance">
-            <EntityTypeMapping TypeName="AppModel.tblBenchmarkPerformance">
+            <EntityTypeMapping TypeName="AppEntities.tblBenchmarkPerformance">
               <MappingFragment StoreEntitySet="tblBenchmarkPerformance">
                 <ScalarProperty Name="fldPortfolioId" ColumnName="fldPortfolioId" />
-                <ScalarProperty Name="fldYear" ColumnName="fldYear" />
-                <ScalarProperty Name="fldMonth" ColumnName="fldMonth" />
+                <ScalarProperty Name="fldDate" ColumnName="fldDate" />
                 <ScalarProperty Name="fldPerformance" ColumnName="fldPerformance" />
                 <ScalarProperty Name="fldInsertDate" ColumnName="fldInsertDate" />
                 <ScalarProperty Name="fldUser" ColumnName="fldUser" />
@@ -1140,7 +1030,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="tblImportPrices">
-            <EntityTypeMapping TypeName="AppModel.tblImportPrices">
+            <EntityTypeMapping TypeName="AppEntities.tblImportPrices">
               <MappingFragment StoreEntitySet="tblImportPrices">
                 <ScalarProperty Name="fldCode" ColumnName="fldCode" />
                 <ScalarProperty Name="fldDate" ColumnName="fldDate" />
@@ -1149,7 +1039,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="tblIndexPrices">
-            <EntityTypeMapping TypeName="AppModel.tblIndexPrices">
+            <EntityTypeMapping TypeName="AppEntities.tblIndexPrices">
               <MappingFragment StoreEntitySet="tblIndexPrices">
                 <ScalarProperty Name="fldIndexId" ColumnName="fldIndexId" />
                 <ScalarProperty Name="fldDate" ColumnName="fldDate" />
@@ -1160,7 +1050,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="tblInstrumentPrices">
-            <EntityTypeMapping TypeName="AppModel.tblInstrumentPrices">
+            <EntityTypeMapping TypeName="AppEntities.tblInstrumentPrices">
               <MappingFragment StoreEntitySet="tblInstrumentPrices">
                 <ScalarProperty Name="fldInsrumentId" ColumnName="fldInsrumentId" />
                 <ScalarProperty Name="fldDate" ColumnName="fldDate" />
@@ -1171,7 +1061,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="tblPortfolioMarketValue">
-            <EntityTypeMapping TypeName="AppModel.tblPortfolioMarketValue">
+            <EntityTypeMapping TypeName="AppEntities.tblPortfolioMarketValue">
               <MappingFragment StoreEntitySet="tblPortfolioMarketValue">
                 <ScalarProperty Name="fldPortfolioId" ColumnName="fldPortfolioId" />
                 <ScalarProperty Name="fldDate" ColumnName="fldDate" />
@@ -1182,75 +1072,81 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="tblPortfolioPerformance">
-            <EntityTypeMapping TypeName="AppModel.tblPortfolioPerformance">
+            <EntityTypeMapping TypeName="AppEntities.tblPortfolioPerformance">
               <MappingFragment StoreEntitySet="tblPortfolioPerformance">
                 <ScalarProperty Name="fldPortfolioId" ColumnName="fldPortfolioId" />
-                <ScalarProperty Name="fldYear" ColumnName="fldYear" />
-                <ScalarProperty Name="fldMonth" ColumnName="fldMonth" />
+                <ScalarProperty Name="fldDate" ColumnName="fldDate" />
                 <ScalarProperty Name="fldPerformance" ColumnName="fldPerformance" />
                 <ScalarProperty Name="fldInsertDate" ColumnName="fldInsertDate" />
                 <ScalarProperty Name="fldUser" ColumnName="fldUser" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="tblTransaction">
+            <EntityTypeMapping TypeName="AppEntities.tblTransaction">
+              <MappingFragment StoreEntitySet="tblTransaction">
+                <ScalarProperty Name="fldTransactionId" ColumnName="fldTransactionId" />
+                <ScalarProperty Name="fldPortfolioId" ColumnName="fldPortfolioId" />
+                <ScalarProperty Name="fldInstrumentId" ColumnName="fldInstrumentId" />
+                <ScalarProperty Name="fldTransactionTypeId" ColumnName="fldTransactionTypeId" />
+                <ScalarProperty Name="fldTradeDate" ColumnName="fldTradeDate" />
+                <ScalarProperty Name="fldSettlementDate" ColumnName="fldSettlementDate" />
+                <ScalarProperty Name="fldQuantity" ColumnName="fldQuantity" />
+                <ScalarProperty Name="fldCost" ColumnName="fldCost" />
+                <ScalarProperty Name="fldPrice" ColumnName="fldPrice" />
+                <ScalarProperty Name="fldInsDate" ColumnName="fldInsDate" />
+                <ScalarProperty Name="fldInsUser" ColumnName="fldInsUser" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="tblUser">
+            <EntityTypeMapping TypeName="AppEntities.tblUser">
+              <MappingFragment StoreEntitySet="tblUser">
+                <ScalarProperty Name="fldId" ColumnName="fldId" />
+                <ScalarProperty Name="fldGuid" ColumnName="fldGuid" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           <EntitySetMapping Name="transaction_type">
-            <EntityTypeMapping TypeName="AppModel.transaction_type">
+            <EntityTypeMapping TypeName="AppEntities.transaction_type">
               <MappingFragment StoreEntitySet="transaction_type">
                 <ScalarProperty Name="type_id" ColumnName="type_id" />
                 <ScalarProperty Name="name" ColumnName="name" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="transactions">
-            <EntityTypeMapping TypeName="AppModel.transactions">
-              <MappingFragment StoreEntitySet="transactions">
-                <ScalarProperty Name="portfolio_id" ColumnName="portfolio_id" />
-                <ScalarProperty Name="instrument_id" ColumnName="instrument_id" />
-                <ScalarProperty Name="transaction_id" ColumnName="transaction_id" />
-                <ScalarProperty Name="transaction_type" ColumnName="transaction_type" />
-                <ScalarProperty Name="price" ColumnName="price" />
-                <ScalarProperty Name="volume" ColumnName="volume" />
-                <ScalarProperty Name="cost" ColumnName="cost" />
-                <ScalarProperty Name="date" ColumnName="date" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <FunctionImportMapping FunctionImportName="spCalcBenchPerformance"
-                                 FunctionName="AppModel.Store.spCalcBenchPerformance">
+          <FunctionImportMapping FunctionImportName="spBuyTransaction" FunctionName="AppEntities.Store.spBuyTransaction" />
+          <FunctionImportMapping FunctionImportName="spCalcBenchPerformance" FunctionName="AppEntities.Store.spCalcBenchPerformance">
             <ResultMapping>
-              <ComplexTypeMapping TypeName="AppModel.spCalcBenchPerformance_Result">
+              <ComplexTypeMapping TypeName="AppEntities.spCalcBenchPerformance_Result">
                 <ScalarProperty Name="fldPortfolioId" ColumnName="fldPortfolioId" />
                 <ScalarProperty Name="fldDate" ColumnName="fldDate" />
-                <ScalarProperty Name="fldPerformance" ColumnName="fldPerformance" />
-                <ScalarProperty Name="fldInsertDate" ColumnName="fldInsertDate" />
-                <ScalarProperty Name="fldUser" ColumnName="fldUser" />
+                <ScalarProperty Name="fldTotal" ColumnName="fldTotal" />
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
-          <FunctionImportMapping FunctionImportName="spCalcMarkValue" FunctionName="AppModel.Store.spCalcMarkValue">
+          <FunctionImportMapping FunctionImportName="spCalcMarkValue" FunctionName="AppEntities.Store.spCalcMarkValue">
             <ResultMapping>
-              <ComplexTypeMapping TypeName="AppModel.spCalcMarkValue_Result">
+              <ComplexTypeMapping TypeName="AppEntities.spCalcMarkValue_Result">
                 <ScalarProperty Name="fldPortfolioId" ColumnName="fldPortfolioId" />
                 <ScalarProperty Name="fldDate" ColumnName="fldDate" />
                 <ScalarProperty Name="fldMarketValue" ColumnName="fldMarketValue" />
-                <ScalarProperty Name="fldInsertDate" ColumnName="fldInsertDate" />
-                <ScalarProperty Name="fldUser" ColumnName="fldUser" />
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
-          <FunctionImportMapping FunctionImportName="spGetPortfolios" FunctionName="AppModel.Store.spGetPortfolios">
+          <FunctionImportMapping FunctionImportName="spGetPortfolios" FunctionName="AppEntities.Store.spGetPortfolios">
             <ResultMapping>
-              <ComplexTypeMapping TypeName="AppModel.spGetPortfolios_Result">
+              <ComplexTypeMapping TypeName="AppEntities.spGetPortfolios_Result">
                 <ScalarProperty Name="portfolio_id" ColumnName="portfolio_id" />
                 <ScalarProperty Name="name" ColumnName="name" />
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
-          <FunctionImportMapping FunctionImportName="spImportPriceData" FunctionName="AppModel.Store.spImportPriceData" />
-          <FunctionImportMapping FunctionImportName="spSELPortfolioMetrics"
-                                 FunctionName="AppModel.Store.spSELPortfolioMetrics">
+          <FunctionImportMapping FunctionImportName="spImportPriceData" FunctionName="AppEntities.Store.spImportPriceData" />
+          <FunctionImportMapping FunctionImportName="spSellTransaction" FunctionName="AppEntities.Store.spSellTransaction" />
+          <FunctionImportMapping FunctionImportName="spSELPortfolioMetrics" FunctionName="AppEntities.Store.spSELPortfolioMetrics">
             <ResultMapping>
-              <ComplexTypeMapping TypeName="AppModel.spSELPortfolioMetrics_Result">
+              <ComplexTypeMapping TypeName="AppEntities.spSELPortfolioMetrics_Result">
                 <ScalarProperty Name="fldId" ColumnName="fldId" />
                 <ScalarProperty Name="fldType" ColumnName="fldType" />
                 <ScalarProperty Name="fldMetric" ColumnName="fldMetric" />
@@ -1258,10 +1154,9 @@
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
-          <FunctionImportMapping FunctionImportName="spSELPortfolioReport"
-                                 FunctionName="AppModel.Store.spSELPortfolioReport">
+          <FunctionImportMapping FunctionImportName="spSELPortfolioReport" FunctionName="AppEntities.Store.spSELPortfolioReport">
             <ResultMapping>
-              <ComplexTypeMapping TypeName="AppModel.spSELPortfolioReport_Result">
+              <ComplexTypeMapping TypeName="AppEntities.spSELPortfolioReport_Result">
                 <ScalarProperty Name="fldPortfolioId" ColumnName="fldPortfolioId" />
                 <ScalarProperty Name="fldName" ColumnName="fldName" />
                 <ScalarProperty Name="fldYear" ColumnName="fldYear" />
@@ -1272,43 +1167,9 @@
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
-          <FunctionImportMapping FunctionImportName="spSetBenchPerformance"
-                                 FunctionName="AppModel.Store.spSetBenchPerformance" />
-          <FunctionImportMapping FunctionImportName="spSetPortfolioPerformance"
-                                 FunctionName="AppModel.Store.spSetPortfolioPerformance" />
-          <FunctionImportMapping FunctionImportName="spSetPortMarketValue"
-                                 FunctionName="AppModel.Store.spSetPortMarketValue" />
-          <FunctionImportMapping FunctionImportName="GetMetrics" FunctionName="AppModel.Store.spSELPortfolioMetrics">
-            <ResultMapping>
-              <ComplexTypeMapping TypeName="AppModel.GetMetrics_Result">
-                <ScalarProperty Name="fldId" ColumnName="fldId" />
-                <ScalarProperty Name="fldType" ColumnName="fldType" />
-                <ScalarProperty Name="fldMetric" ColumnName="fldMetric" />
-                <ScalarProperty Name="fldValue" ColumnName="fldValue" />
-              </ComplexTypeMapping>
-            </ResultMapping>
-          </FunctionImportMapping>
-          <FunctionImportMapping FunctionImportName="GetReport" FunctionName="AppModel.Store.spSELPortfolioReport">
-            <ResultMapping>
-              <ComplexTypeMapping TypeName="AppModel.GetReport_Result">
-                <ScalarProperty Name="fldPortfolioId" ColumnName="fldPortfolioId" />
-                <ScalarProperty Name="fldName" ColumnName="fldName" />
-                <ScalarProperty Name="fldYear" ColumnName="fldYear" />
-                <ScalarProperty Name="fldMonthId" ColumnName="fldMonthId" />
-                <ScalarProperty Name="fldMonth" ColumnName="fldMonth" />
-                <ScalarProperty Name="fldPerformance" ColumnName="fldPerformance" />
-                <ScalarProperty Name="fldValue" ColumnName="fldValue" />
-              </ComplexTypeMapping>
-            </ResultMapping>
-          </FunctionImportMapping>
-          <EntitySetMapping Name="tblUser">
-            <EntityTypeMapping TypeName="AppModel.tblUser">
-              <MappingFragment StoreEntitySet="tblUser">
-                <ScalarProperty Name="fldGuid" ColumnName="fldGuid" />
-                <ScalarProperty Name="fldId" ColumnName="fldId" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="spSetBenchPerformance" FunctionName="AppEntities.Store.spSetBenchPerformance" />
+          <FunctionImportMapping FunctionImportName="spSetPortfolioPerformance" FunctionName="AppEntities.Store.spSetPortfolioPerformance" />
+          <FunctionImportMapping FunctionImportName="spSetPortMarketValue" FunctionName="AppEntities.Store.spSetPortMarketValue" />
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

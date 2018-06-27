@@ -255,12 +255,6 @@
     <Compile Include="Models\benchmark_index.cs">
       <DependentUpon>AppEntities.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\GetMetrics_Result.cs">
-      <DependentUpon>AppEntities.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\GetReport_Result.cs">
-      <DependentUpon>AppEntities.tt</DependentUpon>
-    </Compile>
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\index.cs">
       <DependentUpon>AppEntities.tt</DependentUpon>
@@ -317,10 +311,10 @@
     <Compile Include="Models\tblPortfolioPerformance.cs">
       <DependentUpon>AppEntities.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\tblUser.cs">
+    <Compile Include="Models\tblTransaction.cs">
       <DependentUpon>AppEntities.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\transactions.cs">
+    <Compile Include="Models\tblUser.cs">
       <DependentUpon>AppEntities.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\transaction_type.cs">

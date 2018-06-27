@@ -15,10 +15,10 @@ namespace Portfolio.Web.Models
     {
         public int fldPortfolioId { get; set; }
         public string fldName { get; set; }
-        public int fldYear { get; set; }
-        public int fldMonthId { get; set; }
+        public Nullable<int> fldYear { get; set; }
+        public Nullable<int> fldMonthId { get; set; }
         public string fldMonth { get; set; }
         public string fldPerformance { get; set; }
-        public decimal fldValue { get; set; }
+        public Nullable<double> fldValue { get; set; }
     }
 }

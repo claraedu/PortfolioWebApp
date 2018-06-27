@@ -15,12 +15,9 @@ namespace Portfolio.Web.Models
     public partial class tblBenchmarkPerformance
     {
         public int fldPortfolioId { get; set; }
-        public int fldYear { get; set; }
-        public int fldMonth { get; set; }
+        public System.DateTime fldDate { get; set; }
         public decimal fldPerformance { get; set; }
         public System.DateTime fldInsertDate { get; set; }
         public string fldUser { get; set; }
-    
-        public virtual portfolio portfolio { get; set; }
     }
 }

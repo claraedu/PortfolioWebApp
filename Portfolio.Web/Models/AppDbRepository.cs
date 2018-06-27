@@ -16,7 +16,7 @@ namespace Portfolio.Web.Models
             get
             {
                 var output = new List<PortfolioViewModel>();
-                using (AppEntities _context = new AppEntities())
+                using (AppEntitties _context = new AppEntitties())
                 {
                     var pIds = new List<int>();
                     switch (HttpContext.Current.User.IsInRole("admin"))
@@ -62,23 +62,23 @@ namespace Portfolio.Web.Models
                             p.AssetVolume.Add(entry.portInstVol);
                             p.BenchIndex.Add(entry.posBenchIndexName);
                             p.IndexWeight.Add(entry.posBenchIndexWeight);
-                            p.PMetrics = _context.GetMetrics(p.Id).Where(g => g.fldType == "Portfolio")
+                            p.PMetrics = _context.spSELPortfolioMetrics(p.Id).Where(g => g.fldType == "Portfolio")
                                     .Select(g => g.fldMetric).ToList();
-                            p.PMetricValues = _context.GetMetrics(p.Id).Where(g =>g.fldType == "Portfolio")
+                            p.PMetricValues = _context.spSELPortfolioMetrics(p.Id).Where(g =>g.fldType == "Portfolio")
                                     .Select(g => g.fldValue).ToList();
-                            p.BMetrics = _context.GetMetrics(p.Id).Where(g => g.fldType == "Benchmark")
+                            p.BMetrics = _context.spSELPortfolioMetrics(p.Id).Where(g => g.fldType == "Benchmark")
                                 .Select(g => g.fldMetric).ToList();
-                            p.BMetricValues = _context.GetMetrics(p.Id).Where(g => g.fldType == "Benchmark")
-                                .Select(g => g.fldValue).ToList();
-                            p.TimePeriod = _context.GetReport(p.Id)
+                            p.BMetricValues = _context.spSELPortfolioMetrics(p.Id).Where(g => g.fldType == "Benchmark")
+                               .Select(g => g.fldValue).ToList();
+                            p.TimePeriod = _context.spSELPortfolioReport(p.Id)
                                             .Where(g => g.fldPerformance == "Portfolio")
                                             .Select(g => g.fldMonth)
                                             .ToList();
-                            p.PortfolioPerformance = _context.GetReport(p.Id)
+                            p.PortfolioPerformance = _context.spSELPortfolioReport(p.Id)
                                                     .Where(g => g.fldPerformance == "Portfolio")
                                                     .Select(g => g.fldValue)
                                                     .ToList();
-                            p.BenchmarkPerformance = _context.GetReport(p.Id)
+                            p.BenchmarkPerformance = _context.spSELPortfolioReport(p.Id)
                                                     .Where(g => g.fldPerformance == "Benchmark")
                                                     .Select(g => g.fldValue)
                                                     .ToList();

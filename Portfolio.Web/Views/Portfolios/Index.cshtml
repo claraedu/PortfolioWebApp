@@ -8,10 +8,9 @@
     var portolios = (List<SimplePortfolio>) ViewData["portfolios"];
 }
 
-
 <h2>Select a portfolio</h2>
 <select class="form-control" id="portfolioSelect" name="portfolioSelect" onchange="renderPartial(this)">
-    <option value="" selected disabled hidden>Select portfolio</option>
+    <option value="" selected disabled>Select portfolio</option>
     @foreach (var item in portolios)
     {
         <option value="@item.Id">@item.Name</option>

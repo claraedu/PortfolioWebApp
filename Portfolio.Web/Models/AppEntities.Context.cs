@@ -15,10 +15,10 @@ namespace Portfolio.Web.Models
     using System.Data.Entity.Core.Objects;
     using System.Linq;
     
-    public partial class AppEntities : DbContext
+    public partial class AppEntitties : DbContext
     {
-        public AppEntities()
-            : base("name=AppEntities")
+        public AppEntitties()
+            : base("name=AppEntitties")
         {
         }
     
@@ -41,9 +41,30 @@ namespace Portfolio.Web.Models
         public virtual DbSet<tblInstrumentPrices> tblInstrumentPrices { get; set; }
         public virtual DbSet<tblPortfolioMarketValue> tblPortfolioMarketValue { get; set; }
         public virtual DbSet<tblPortfolioPerformance> tblPortfolioPerformance { get; set; }
-        public virtual DbSet<transaction_type> transaction_type { get; set; }
-        public virtual DbSet<transactions> transactions { get; set; }
+        public virtual DbSet<tblTransaction> tblTransaction { get; set; }
         public virtual DbSet<tblUser> tblUser { get; set; }
+        public virtual DbSet<transaction_type> transaction_type { get; set; }
+    
+        public virtual int spBuyTransaction(Nullable<int> pId, Nullable<int> instrId, Nullable<System.DateTime> date, Nullable<decimal> quantity)
+        {
+            var pIdParameter = pId.HasValue ?
+                new ObjectParameter("pId", pId) :
+                new ObjectParameter("pId", typeof(int));
+    
+            var instrIdParameter = instrId.HasValue ?
+                new ObjectParameter("instrId", instrId) :
+                new ObjectParameter("instrId", typeof(int));
+    
+            var dateParameter = date.HasValue ?
+                new ObjectParameter("date", date) :
+                new ObjectParameter("date", typeof(System.DateTime));
+    
+            var quantityParameter = quantity.HasValue ?
+                new ObjectParameter("quantity", quantity) :
+                new ObjectParameter("quantity", typeof(decimal));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("spBuyTransaction", pIdParameter, instrIdParameter, dateParameter, quantityParameter);
+        }
     
         public virtual ObjectResult<spCalcBenchPerformance_Result> spCalcBenchPerformance()
         {
@@ -63,6 +84,27 @@ namespace Portfolio.Web.Models
         public virtual int spImportPriceData()
         {
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("spImportPriceData");
+        }
+    
+        public virtual int spSellTransaction(Nullable<int> pId, Nullable<int> instrId, Nullable<System.DateTime> date, Nullable<decimal> quantity)
+        {
+            var pIdParameter = pId.HasValue ?
+                new ObjectParameter("pId", pId) :
+                new ObjectParameter("pId", typeof(int));
+    
+            var instrIdParameter = instrId.HasValue ?
+                new ObjectParameter("instrId", instrId) :
+                new ObjectParameter("instrId", typeof(int));
+    
+            var dateParameter = date.HasValue ?
+                new ObjectParameter("date", date) :
+                new ObjectParameter("date", typeof(System.DateTime));
+    
+            var quantityParameter = quantity.HasValue ?
+                new ObjectParameter("quantity", quantity) :
+                new ObjectParameter("quantity", typeof(decimal));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("spSellTransaction", pIdParameter, instrIdParameter, dateParameter, quantityParameter);
         }
     
         public virtual ObjectResult<spSELPortfolioMetrics_Result> spSELPortfolioMetrics(Nullable<int> pId)
@@ -96,24 +138,6 @@ namespace Portfolio.Web.Models
         public virtual int spSetPortMarketValue()
         {
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("spSetPortMarketValue");
-        }
-    
-        public virtual ObjectResult<GetMetrics_Result> GetMetrics(Nullable<int> pId)
-        {
-            var pIdParameter = pId.HasValue ?
-                new ObjectParameter("pId", pId) :
-                new ObjectParameter("pId", typeof(int));
-    
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetMetrics_Result>("GetMetrics", pIdParameter);
-        }
-    
-        public virtual ObjectResult<GetReport_Result> GetReport(Nullable<int> pID)
-        {
-            var pIDParameter = pID.HasValue ?
-                new ObjectParameter("pID", pID) :
-                new ObjectParameter("pID", typeof(int));
-    
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetReport_Result>("GetReport", pIDParameter);
         }
     }
 }

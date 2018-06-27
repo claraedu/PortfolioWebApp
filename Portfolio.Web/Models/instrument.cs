@@ -19,7 +19,7 @@ namespace Portfolio.Web.Models
         {
             this.position = new HashSet<position>();
             this.tblInstrumentPrices = new HashSet<tblInstrumentPrices>();
-            this.transactions = new HashSet<transactions>();
+            this.tblTransaction = new HashSet<tblTransaction>();
         }
     
         public int instrument_id { get; set; }
@@ -33,6 +33,6 @@ namespace Portfolio.Web.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tblInstrumentPrices> tblInstrumentPrices { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<transactions> transactions { get; set; }
+        public virtual ICollection<tblTransaction> tblTransaction { get; set; }
     }
 }

@@ -17,13 +17,13 @@ namespace Portfolio.Web.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public transaction_type()
         {
-            this.transactions = new HashSet<transactions>();
+            this.tblTransaction = new HashSet<tblTransaction>();
         }
     
         public int type_id { get; set; }
         public string name { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<transactions> transactions { get; set; }
+        public virtual ICollection<tblTransaction> tblTransaction { get; set; }
     }
 }

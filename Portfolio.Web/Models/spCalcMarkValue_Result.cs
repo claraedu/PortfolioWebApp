@@ -15,8 +15,6 @@ namespace Portfolio.Web.Models
     {
         public int fldPortfolioId { get; set; }
         public System.DateTime fldDate { get; set; }
-        public Nullable<double> fldMarketValue { get; set; }
-        public System.DateTime fldInsertDate { get; set; }
-        public string fldUser { get; set; }
+        public Nullable<decimal> fldMarketValue { get; set; }
     }
 }

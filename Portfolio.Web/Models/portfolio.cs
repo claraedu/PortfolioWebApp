@@ -19,10 +19,8 @@ namespace Portfolio.Web.Models
         {
             this.portfolio_to_benchmark = new HashSet<portfolio_to_benchmark>();
             this.position = new HashSet<position>();
-            this.transactions = new HashSet<transactions>();
-            this.tblBenchmarkPerformance = new HashSet<tblBenchmarkPerformance>();
+            this.tblTransaction = new HashSet<tblTransaction>();
             this.tblPortfolioMarketValue = new HashSet<tblPortfolioMarketValue>();
-            this.tblPortfolioPerformance = new HashSet<tblPortfolioPerformance>();
         }
     
         public int portfolio_id { get; set; }
@@ -36,13 +34,9 @@ namespace Portfolio.Web.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<position> position { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<transactions> transactions { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tblBenchmarkPerformance> tblBenchmarkPerformance { get; set; }
+        public virtual ICollection<tblTransaction> tblTransaction { get; set; }
+        public virtual tblUser tblUser { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tblPortfolioMarketValue> tblPortfolioMarketValue { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tblPortfolioPerformance> tblPortfolioPerformance { get; set; }
-        public virtual tblUser tblUser { get; set; }
     }
 }
