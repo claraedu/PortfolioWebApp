@@ -107,5 +107,7 @@ namespace PortfolioViewer.Models.Portfolio
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<Nullable<bool>>("HasPortfolioPermission", userIDParameter, portfolioIDParameter);
         }
-    }
+
+		public System.Data.Entity.DbSet<PortfolioViewer.Models.CustomDBUser> CustomDBUsers { get; set; }
+	}
 }

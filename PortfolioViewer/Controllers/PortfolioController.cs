@@ -98,13 +98,20 @@ namespace PortfolioViewer.Controllers
             return PartialView("_PartialMonthlyPerformance",performance);
         }
 
-		//public FileResult DownloadReport()
-		//{
-		//	NetworkCredential nwc = new NetworkCredential("username", "password");
-		//	WebClient client = new WebClient();
-		//	client.Credentials = nwc;
-		//	string reportURL = "http://someIp/ReportServer/?%2fReportProjectName/ReportName&rs:Command=Render&rs:Format=PDF";
-		//	return File(client.DownloadData(reportURL), "application/pdf");
-		//}
-    }
+		public FileResult DownloadReport(int portfolioID)
+		{
+			var user = UserManager.FindById(User.Identity.GetUserId());
+
+			//AUTHORIZE USER
+			if (!_PortfolioRepository.HasPortfolioPermissions(user.Id, portfolioID))
+			{
+				return null;
+			}
+
+			WebClient client = new WebClient();
+			client.UseDefaultCredentials = true;
+			string reportURL = "http://desktop-9pkcvov:8085/ReportServer_SSRS/Pages/ReportViewer.aspx?%2fPortfolioPresentation%2fCustomerReport&rs:Command=Render&rs:Format=PDF&Portfolio_ID="+portfolioID;
+			return File(client.DownloadData(reportURL), "application/pdf");
+		}
+	}
 }

@@ -1,0 +1,16 @@
+﻿@model PortfolioViewer.Models.Role
+
+<select class="form-control" name="CurrentRole.ID" id="CurrentRole">
+
+	@foreach (var role in (IEnumerable<PortfolioViewer.Models.Role>)ViewData["roles"])
+	{
+		if (role.ID == Model.ID)
+		{
+			<option value="@Html.DisplayFor(m => m.ID)" selected>@role.Name</option>
+		}
+		else
+		{
+			<option value="@role.ID">@role.Name</option>
+		}
+	}
+</select>

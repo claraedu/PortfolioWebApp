@@ -1,101 +1,118 @@
 ﻿@model PortfolioViewer.Models.CustomDBUser
 
 @{
+	PortfolioViewer.Models.CustomDBUser user = (PortfolioViewer.Models.CustomDBUser)ViewData["user"];
 	IEnumerable<PortfolioViewer.Models.Role> roles = (IEnumerable<PortfolioViewer.Models.Role>)ViewData["roles"];
 	IEnumerable<PortfolioViewer.Models.Portfolio.Portfolio> portfolios = (IEnumerable<PortfolioViewer.Models.Portfolio.Portfolio>)ViewData["portfolios"];
 }
 
 <div class="row">
-	<div class="col-lg-9">
+	<div class="col-lg-12">
 		<div class="panel panel-primary">
 			<div class="panel-heading">
-				<h3 class="panel-title"><strong>Bear Little</strong></h3>
+				<h3 class="panel-title"><strong>@Model.FirstName @Model.LastName</strong></h3>
 			</div>
 			<div class="panel-body">
 				<div class="row">
-					<div class="col-lg-8">
-						<table class="table">
-							<thead class="thead-light">
-								<tr>
-									<th scope="col">Details:</th>
-									<th scope="col"></th>
-								</tr>
-							</thead>
-							<tbody>
+					<div class="col-lg-6">
 
-								<tr>
-									<th scope="row">Username</th>
-									<td>username@user.com</td>
-								</tr>
-								<tr>
-									<th scope="row">Phone</th>
-									<td>0707-call-me</td>
-								</tr>
-								<tr>
-									<th scope="row">Current role</th>
-									<td></td>
-								</tr>
+						@using (Html.BeginForm("UpdateUser", "Admin", FormMethod.Post, new { @class = "form", role = "form", id = "updateUserForm" }))
+						{
+							@Html.AntiForgeryToken()
 
-							</tbody>
-						</table>
+							<input type="text" value="@Model.ID" name="ID" hidden>
+							<table class="table">
+								<tbody>
+									<tr>
+										<th scope="row">Username</th>
+										<td>
+											<input type="text" class="form-control" value="@Model.UserName" disabled>
+										</td>
+									</tr>
+									<tr>
+										<th scope="row">Email</th>
+										<td><input class="form-control" type="text" value="@Model.Email" name="Email"></td>
+									</tr>
+									<tr>
+										<th scope="row">Phone</th>
+										<td><input type="text" class="form-control" id="phoneField" value="@Model.Phone" name="Phone" placeholder="Phone number"></td>
+									</tr>
+									<tr>
+										<th scope="row">Role</th>
+										<td>
+											<div class="form-group">
+												@Html.EditorFor(m => m.CurrentRole, new { roles = (IEnumerable<PortfolioViewer.Models.Role>)ViewData["roles"] })
+											</div>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+
+							<div class="row">
+								<div class="col-lg-4">
+									<input type="button" id="updateUserBtn" value="Save Changes" class="btn btn-success" />
+								</div>
+
+							</div>
+						}
 					</div>
+
+					<div class="col-lg-6">
+						<div class="panel panel-info">
+							<div class="panel-heading">
+								<h3 class="panel-title">Portfolio Permissions:</h3>
+							</div>
+							<div class="panel-body">
+
+								<table class="table">
+									<tbody>
+										@foreach (var p in portfolios)
+										{
+											<tr>
+												<td>@p.Portfolio_Name</td>
+												<td><input type="checkbox" class="form-check-input" id="@p.Portfolio_ID" checked></td>
+											</tr>
+										}
+										</tbody>
+								</table>
+							</div>
+						</div>
+
+						<div id="updateSuccessAlertDiv" class="alert alert-success" role="alert" style="visibility: hidden">
+							Successfully saved changes.
+						</div>
+
+					</div>
+
 				</div>
-				@using (Html.BeginForm("ChangeRole", "Admin", FormMethod.Post, new { @class = "form", role = "form" }))
-				{
-					@Html.AntiForgeryToken()
-					<div class="form-group row">
-						<label for="staticEmail" class="col-sm-2 col-form-label">Email</label>
-						<input class="form-control" type="text" placeholder="Default input" disabled>
-					</div>
-
-					<div class="form-group row">
-						<label for="inputPassword3" class="col-sm-2 col-form-label">Password</label>
-						<div class="col-sm-10">
-							<input type="password" class="form-control" id="inputPassword3" placeholder="Password">
-						</div>
-					</div>
-
-					<div class="form-group">
-						<select class="form-control" id="roleList" name="asdf">
-							@foreach (var item in roles)
-							{
-								<option value="@Html.DisplayFor(m => item.ID)">@Html.DisplayFor(m => item.Name)</option>
-							}
-						</select>
-					</div>
-
-					<div class="form-row">
-						<div class="form-group">
-							<input type="submit" value="Apply" class="btn btn-primary" />
-						</div>
-					</div>
-				}
-			</div>
-		</div>
-	</div>
-
-
-	<div class="col-lg-3">
-		<div class="panel panel-info">
-			<div class="panel-heading">
-				<h3 class="panel-title">Portfolio Permissions:</h3>
-			</div>
-			<div class="panel-body">
-				<ul class="list-group" id="portfolioListContainer">
-					@foreach (var p in portfolios)
-					{
-						<li id="@p.Portfolio_ID" class="list-group-item">
-							@p.Portfolio_Name
-						</li>
-					}
-				</ul>
 			</div>
 		</div>
 	</div>
 </div>
 
+<script>
+	@*var roleList = @Html.Raw(Json.Encode(Model));*@
 
 
-	<script>
-	var roleList = @Html.Raw(Json.Encode(Model));
-	</script>
+	$(document).ready(function () {
+		$('#updateUserBtn').click(function () {
+			var frm = $("#updateUserForm")
+
+			$.ajax({
+				type: frm.attr('method'),
+				url: frm.attr('action'),
+				data: frm.serialize(),
+				success: function (data) {
+					console.log(data);
+
+					$('#updateSuccessAlertDiv').css({ opacity: 0.0, visibility: "visible" }).animate({ opacity: 1.0 }, 20).animate({ opacity: 0 }, 2400);
+				},
+				error: function (data) {
+					console.log('An error occurred.');
+					console.log(data);
+				},
+			});
+		})
+	})
+
+</script>
